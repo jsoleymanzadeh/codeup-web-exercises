@@ -1,4 +1,4 @@
-console.log("Post//Pre Increment");
+console.log("Post and Pre Increment");
 var a = 1;
 var b = a++;
 var c = ++a;
@@ -7,7 +7,7 @@ console.log(a);
 console.log(b);
 console.log(c);
 
-console.log("Post Incrememnt");
+console.log("\nPost Incrememnt");
 var d = "hello";
 var e = false;
 d++;
@@ -15,7 +15,7 @@ e++;
 console.log(d);
 console.log(e);
 
-console.log("String")
+console.log("\nString")
 var perplexed; // perplexed is undefined (no value is assigned)
 console.log(perplexed + 2);
 
