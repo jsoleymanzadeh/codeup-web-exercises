@@ -7,7 +7,7 @@ console.log(a);
 console.log(b);
 console.log(c);
 
-console.log("\nPost Incrememnt");
+console.log("\nIncrement on Non-Numbers");
 var d = "hello";
 var e = false;
 d++;
@@ -15,10 +15,11 @@ e++;
 console.log(d);
 console.log(e);
 
-console.log("\nString")
+console.log("\nNumber Operation on String")
 var perplexed; // perplexed is undefined (no value is assigned)
 console.log(perplexed + 2);
 
+console.log("\ntoFixed");
 var price = 2.7;
 console.log(price.toFixed(2));
 
