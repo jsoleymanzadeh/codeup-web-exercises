@@ -11,6 +11,7 @@
 function sayHello(name) {
     return "Hello, " + name + "!";
 }
+
 /**
  * TODO:
  * Call the function 'sayHello' and pass your name as a string literal argument.
@@ -18,7 +19,7 @@ function sayHello(name) {
  *
  * console.log 'helloMessage' to check your work
  */
-var helloMessage = sayHello("Jasper");
+let helloMessage = sayHello("Jasper");
 console.log(helloMessage);
 /**
  * TODO:
@@ -26,7 +27,7 @@ console.log(helloMessage);
  * variable to the 'sayHello' function. You should see the same output in the
  * console.
  */
-var myName = "Jasper";
+let myName = "Jasper";
 console.log(sayHello(myName));
 // Don't modify the following line, it generates a random number between 1 and 3
 // and stores it in a variable named random
@@ -50,13 +51,15 @@ var random = Math.floor((Math.random() * 3) + 1);
  * number)
  */
 function isTwo(number) {
-    if(number == 2) {
+    if (number == 2) {
         return true;
     } else {
         return false;
     }
 }
+
 console.log(isTwo(random));
+
 /**
  * TODO:
  * Create a function named 'calculateTip' to calculate a tip on a bill at a
@@ -71,6 +74,7 @@ console.log(isTwo(random));
 function calculateTip(tipPercentage, billTotal) {
     return (tipPercentage * billTotal).toFixed(2);
 }
+
 /**
  * TODO:
  * Use prompt and alert in combination with your calculateTip function to
@@ -78,6 +82,7 @@ function calculateTip(tipPercentage, billTotal) {
  * then display the dollar amount they should tip
  */
 alert("Your tip is $" + calculateTip(prompt("What percentage would you like to tip?", 0.15), prompt("What is your bill's total?", 0)));
+
 /**
  * TODO:
  * Create a function named `applyDiscount`. This function should accept a price
@@ -93,5 +98,9 @@ alert("Your tip is $" + calculateTip(prompt("What percentage would you like to t
  * > applyDiscount(45.99, 0.12) // 40.4712
  */
 function applyDiscount(originalPrice, discountPercent) {
+    if ((discountPercent > 1) || (discountPercent < 0)) {
+        console.log("INVALID DISCOUNT VALUE");
+        return originalPrice;
+    }
     return (originalPrice * (1 - discountPercent)).toFixed(2);
 }
