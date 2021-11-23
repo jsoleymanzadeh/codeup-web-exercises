@@ -69,7 +69,7 @@ console.log(isTwo(random));
  * > calculateTip(0.15, 33.42) // returns 5.013
  */
 function calculateTip(tipPercentage, billTotal) {
-    return tipPercentage * billTotal;
+    return (tipPercentage * billTotal).toFixed(2);
 }
 /**
  * TODO:
@@ -93,5 +93,5 @@ alert("Your tip is $" + calculateTip(prompt("What percentage would you like to t
  * > applyDiscount(45.99, 0.12) // 40.4712
  */
 function applyDiscount(originalPrice, discountPercent) {
-    return originalPrice * (1 - discountPercent);
+    return (originalPrice * (1 - discountPercent)).toFixed(2);
 }
