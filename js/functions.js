@@ -81,7 +81,7 @@ function calculateTip(tipPercentage, billTotal) {
  * prompt the user for the bill total and a percentage they would like to tip,
  * then display the dollar amount they should tip
  */
-alert("Your tip is $" + calculateTip(prompt("What percentage would you like to tip?", 0.15), prompt("What is your bill's total?", 0)));
+alert("Your tip is $" + calculateTip((prompt("What percentage would you like to tip?", 15)) * 0.01, prompt("What is your bill's total?", 0)));
 
 /**
  * TODO:
@@ -98,6 +98,7 @@ alert("Your tip is $" + calculateTip(prompt("What percentage would you like to t
  * > applyDiscount(45.99, 0.12) // 40.4712
  */
 function applyDiscount(originalPrice, discountPercent) {
+    discountPercent *= 0.01;
     if ((discountPercent > 1) || (discountPercent < 0)) {
         console.log("INVALID DISCOUNT VALUE");
         return originalPrice;
