@@ -158,9 +158,10 @@ function isBlank(input) {
     return input.trim() === "";
 }
 
-/*function trim(string) {
+function stringTrim(string) {
     return string.trim();
-}*/
+}
+
 function areEqual(input1, input2) {
     return input1 == input2;
 }
@@ -185,13 +186,98 @@ function or(predicate1, predicate2) {
     return predicate1 || predicate2;
 }
 
-/*function reverseString(string) {
-    return
-}*/
+function reverseString(string) {
+    return string.split('').reverse().join('');
+}
+
 function absoluteValue(number) {
     return Math.abs(number);
 }
 
 function rollDice(sides) {
     return ((sides - 1) * Math.random() + 1).toFixed();
+}
+
+function returnTwo() {
+    return 2;
+}
+
+function sayHowdy() {
+    console.log("Howdy!");
+}
+
+function returnName() {
+    return "Jasper";
+}
+
+function addThree(number) {
+    return number + 3;
+}
+
+function sayString(string) {
+    return string;
+}
+
+function identity(input) {
+    return input;
+}
+
+function getRandomNumber(min, max) {
+    return (max - min) * Math.random() + min;
+}
+
+function first(input) {
+    return input.charAt(0);
+}
+
+function last(input) {
+    return input.charAt(input.length - 1);
+}
+
+function rest(input) {
+    return input.split('').slice(1, input.length).join('');
+}
+
+function stringReverse(input) {
+    return input.split('').reverse().join('');
+}
+
+function isNumeric(input) {
+    return typeof input === "number";
+}
+
+function count(input) {
+    return input.length;
+}
+
+function add(a, b) {
+    return a + b;
+}
+
+function subtract(a, b) {
+    return a - b;
+}
+
+function multiply(a, b) {
+    return a * b;
+}
+
+function divide(a, b) {
+    return a / b;
+}
+
+function remainder(number, divisor) {
+    return number % divisor;
+}
+
+function square(a) {
+    return a * a;
+}
+
+function sumOfSquares(a, b) {
+    return add(square(a), square(b));
+}
+
+function doMath(operator, a, b) {
+    return operator(a, b);
 }
