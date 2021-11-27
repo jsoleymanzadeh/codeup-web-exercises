@@ -254,19 +254,19 @@ function add(a, b) {
     return a + b;
 }
 
-function subtract(a, b) {
+function subtract2(a, b) {
     return a - b;
 }
 
-function multiply(a, b) {
+function multiply2(a, b) {
     return a * b;
 }
 
-function divide(a, b) {
+function divide2(a, b) {
     return a / b;
 }
 
-function remainder(number, divisor) {
+function remainder2(number, divisor) {
     return number % divisor;
 }
 
@@ -280,4 +280,40 @@ function sumOfSquares(a, b) {
 
 function doMath(operator, a, b) {
     return operator(a, b);
+}
+
+function countWhitespace(string) {
+    return string.length - string.trim().length;
+}
+
+function twoStrings(string1, string2) {
+    return string1.replace(string2, '');
+}
+
+function lastLetterA(string) {
+    return string.charAt(string.length - 1) === "a" || string.charAt(string.length - 1) === "A";
+}
+
+function countWhitespaceLeft(string) {
+    return string.length - string.trimStart().length;
+}
+
+function returnTrueMessage() {
+    return "Hey, it's true!";
+}
+
+function returnFalseMessage() {
+    return "Hey, it's false!";
+}
+
+function returnMessage(input) {
+    return input();
+}
+
+function willLoginUser(username, password, age, isAdmin) {
+    if (isAdmin) {
+        return username !== password;
+    } else {
+        return (username !== password) && age >= 18;
+    }
 }
