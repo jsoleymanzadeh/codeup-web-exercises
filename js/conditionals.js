@@ -53,6 +53,7 @@
  * Pass the `randomColor` variable to your 'analyzeColor' function and console.log the results.
  * You should see a different message every time you refresh the page
  */
+
 // console.log(analyzeColor(randomColor));
 
 /**
@@ -157,15 +158,13 @@ alert("Your total bill was $" + totalBill + "\nYour new total bill is $" + calcu
  * HINT: The way we prompt for a value could be improved
  */
 (function () {
-    if (confirm("Would you like to enter a number?")) {
-        let input = Number(prompt("Please enter your number now."));
-        if (input.toString() === "NaN") {
-            alert("You did not enter a number.");
-        } else {
-            alert("Your number is " + evenOrOdd(Number(input)));
-            alert(input + " + 100  = " + plus100(Number(input)));
-            alert("Your number is " + positiveOrNegative(Number(input)));
-        }
+    let input = (confirm("Would you like to enter a number?")) ? Number(prompt("Please enter your number now.")) : NaN;
+    if (input.toString() === "NaN") {
+        alert("You did not enter a number.");
+    } else {
+        alert("Your number is " + evenOrOdd(Number(input)));
+        alert(input + " + 100  = " + plus100(Number(input)));
+        alert("Your number is " + positiveOrNegative(Number(input)));
     }
 
     function evenOrOdd(number) {
