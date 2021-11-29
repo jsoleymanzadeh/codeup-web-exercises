@@ -159,7 +159,7 @@ alert("Your total bill was $" + totalBill + "\nYour new total bill is $" + calcu
  */
 (function () {
     let input = (confirm("Would you like to enter a number?")) ? Number(prompt("Please enter your number now.")) : NaN;
-    if (input.toString() === "NaN") {
+    if (isNaN(input) || input == "") {
         alert("You did not enter a number.");
     } else {
         alert("Your number is " + evenOrOdd(Number(input)));
