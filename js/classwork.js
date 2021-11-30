@@ -41,13 +41,50 @@ function autoGrade(input) {
     }
 }
 
-let student1Grade = 87;
-let student2Grade = 59;
-let student3Grade = 96;
-let student4Grade = 77;
-let student5Grade = 99;
-autoGrade(student1Grade);
-autoGrade(student2Grade);
-autoGrade(student3Grade);
-autoGrade(student4Grade);
-autoGrade(student5Grade);
+(function () {
+    function average() {
+        return (Number(prompt("What is your first score?")) + Number(prompt("What is your second score?")) + Number(prompt("What is your third score?"))) / 3;
+    }
+
+    function multipleOfThreeOrFive() {
+        let highScore = prompt("What is your highest score?");
+        if (highScore % 3 === 0 || highScore % 5 === 0) {
+            return "3 or 5.";
+        } else {
+            return "neither 3 nor 5.";
+        }
+    }
+
+    function lowerCase(name) {
+        name = name.toLowerCase();
+        return name.replace("the", "the ").replace("best", "best ").replace("bowling", "bowling ").replace("place", "place ");
+    }
+
+    let score = 109;
+    let name = "bowling Is Fun";
+    let isBowlingFun = true;
+    let players = ["tom", "jerry", "Garfield"];
+
+    function variableType(input) {
+        return typeof input;
+    }
+
+    alert("Your average score is " + average() + ".");
+    alert("Your highest score is divisible by " + multipleOfThreeOrFive());
+    alert('The signs at our local bowling place say "ThEbEsTbOwLiNgPlAcEever." They should fix the spelling to "' + lowerCase("ThEbEsTbOwLiNgPlAcEever" + '."'));
+    alert("The score of " + score + " is a " + variableType(score) + ".");
+    alert('The name "' + name + '" is a ' + variableType(name) + ".");
+    alert('The variable "isBowlingFun" is a ' + variableType(isBowlingFun) + ".");
+    alert("The group of players " + players + " is an " + variableType(players));
+})();
+let myFunction = function (firstName, lastName) {
+    return firstName + " " + lastName;
+}
+
+function thatsNotMyName(name) {
+    if (name = "Laura") {
+        return "that's me! I'm " + name;
+    } else {
+        return "that's not my name";
+    }
+}
