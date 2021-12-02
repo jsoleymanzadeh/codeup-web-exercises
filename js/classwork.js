@@ -88,15 +88,40 @@
 //         return "that's not my name";
 //     }
 // }
-let parkingSpaceChecked = 1;
-let available = false;
-let emptySpot = Math.floor(Math.random() * 20) + 1;
-while (!available) {
-    if (parkingSpaceChecked === emptySpot) {
-        available = true;
-        console.log("There's an empty space at " + parkingSpaceChecked + "!");
-    } else {
-        console.log("Space " + parkingSpaceChecked + " is taken...");
-        parkingSpaceChecked++;
-    }
-}
+// let parkingSpaceChecked = 1;
+// let available = false;
+// let emptySpot = Math.floor(Math.random() * 20) + 1;
+// while (!available) {
+//     if (parkingSpaceChecked === emptySpot) {
+//         available = true;
+//         console.log("There's an empty space at " + parkingSpaceChecked + "!");
+//     } else {
+//         console.log("Space " + parkingSpaceChecked + " is taken...");
+//         parkingSpaceChecked++;
+//     }
+// }
+// let value = 0;
+// do {
+//     console.log(value);
+//     value += 2;
+// } while (value <= 50);
+// let value = 0;
+// console.log("---------- while loop practice ----------");
+// while (value <= 10) {
+//     console.log("Iteration: " + value);
+//     value++;
+// }
+// console.log("---------- do-while loop practice ----------");
+// value = 0;
+// do {
+//     console.log("Iteration: " + value);
+//     value++;
+// } while (value <= 10);
+// let correctPassword = "secretpassword";
+// let input = "";
+// while (input !== correctPassword) {
+//     input = prompt("Please enter your password correctly.");
+//     if (input !== correctPassword) {
+//         alert("You entered the wrong password. Please try again.");
+//     }
+// }
