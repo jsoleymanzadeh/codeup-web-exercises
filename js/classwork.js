@@ -125,3 +125,11 @@
 //         alert("You entered the wrong password. Please try again.");
 //     }
 // }
+// let favoriteFoods = ["persian beef kebab", "medium grilled steak", "persian lamb stew", "grilled salmon", "sweet and sour pork"];
+// console.log(favoriteFoods);
+// favoriteFoods[0] += " 4";
+// favoriteFoods[1] += " 3";
+// favoriteFoods[2] += " 1";
+// favoriteFoods[3] += " 5";
+// favoriteFoods[4] += " 2";
+// console.log(favoriteFoods);
