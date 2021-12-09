@@ -9,26 +9,33 @@
 <body>
 	<h1>Register With Us</h1>
 	<form method="POST" action="https://request-inspector.glitch.me/">
-		<label for="email">Email</label> <input id="email" name="email" type="text"> <br>
-		<label for="password">Password</label> <input id="password" name="password" type="password"> <br>
-		<label for="bio">Bio</label> <textarea id="bio" name="bio"></textarea> <br>
+		<label>Email <input name="email" type="text"></label>
+		<br>
+		<label>Password <input name="password" type="password"></label>
+		<br>
+		<label>Bio
+			<br>
+			<textarea name="bio" placeholder="Tell us about yourself." rows="5" cols="30"></textarea></label>
+		<br>
 		<section>
 			<h2>How did you hear about us?</h2>
-			<label for="billboard">Billboard</label>
-			<input id="billboard" type="checkbox" name="discovery_method" value="billboard"><br> <label for="radio_ad">Radio
-			Advertisement</label> <input id="radio_ad" type="checkbox" name="discovery_method" value="radio_ad"><br>
-			<label for="internet_ad">Internet Advertisement</label>
-			<input id="internet_ad" type="checkbox" name="discovery_method" value="internet_ad"><br> <label for="other">Other</label>
-			<input id="other" type="checkbox" name="discovery_method" value="other">
+			<label><input type="checkbox" name="discovery_method" value="billboard">Billboard</label>
+			<br>
+			<label><input type="checkbox" name="discovery_method" value="radio_ad">Radio Advertisement</label>
+			<br>
+			<label><input type="checkbox" name="discovery_method" value="internet_ad">Internet Advertisement</label>
+			<br>
+			<label><input type="checkbox" name="discovery_method" value="other">Other</label>
 		</section>
 		<hr>
-		<label for="browser">What web browser are you using?</label>
-		<select id="browser" name="browser">
-			<option value="edge">Edge</option>
-			<option value="safari">Safari</option>
-			<option value="chrome">Chrome</option>
-			<option value="firefox">Firefox</option>
-		</select>
+		<label>What web browser are you using?
+			<select id="browser" name="browser">
+				<option value="edge">Edge</option>
+				<option value="safari">Safari</option>
+				<option value="chrome">Chrome</option>
+				<option value="firefox">Firefox</option>
+			</select>
+		</label>
 		<br>
 		<button type="submit">Register</button>
 	</form>

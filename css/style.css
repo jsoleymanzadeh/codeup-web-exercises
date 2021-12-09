@@ -1,0 +1,44 @@
+.fancy-header {
+    color: purple;
+    text-decoration: underline;
+}
+
+main > h1 {
+    text-align: center;
+}
+
+h2 {
+    background-color: yellow;
+    text-decoration: underline;
+}
+
+body {
+    background-color: lightgrey;
+    background-image: url("../img/background-pattern.png");
+    font-family: Helvetica;
+}
+
+ul {
+    list-style: square;
+}
+
+table {
+    font-size: 1.5em;
+    padding: 1.5em;
+}
+
+a:link {
+    color: green;
+}
+
+a:visited {
+    color: gray;
+}
+
+a:hover {
+    color: red;
+}
+
+a:active {
+    color: blue;
+}
