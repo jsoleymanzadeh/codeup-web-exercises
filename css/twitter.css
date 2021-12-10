@@ -113,7 +113,7 @@ a {
 }
 
 .who-to-follow {
-    float: right;
+    float: left;
     width: calc(25% - 1em);
     margin: 0 0.5em;
 }
