@@ -1,0 +1,26 @@
+nav {
+    display: flex;
+    background-color: lightgrey;
+    font-weight: bold;
+    font-family: 'Work Sans', sans-serif;
+    align-items: center;
+}
+
+a {
+    display: inline-block;
+    padding: 1em;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    color: blue;
+}
+
+#logo {
+    margin: 0 auto;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3em;
+    padding: 0.2em 0;
+}
