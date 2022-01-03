@@ -41,8 +41,8 @@
         text-decoration: none;
     }
 
-    .header-img {
-        content: url(https://via.placeholder.com/339x224);
+    .header-img > img {
+        width: 100%;
     }
 
     footer {
