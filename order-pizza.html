@@ -12,7 +12,7 @@
 <body>
 	<!-- Main page content -->
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="#">Pizza world</a>
+		<a class="navbar-brand" href="order-pizza.html">Pizza world</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -72,7 +72,7 @@
 									Garlic Seasoned crust with a rich, buttery taste.
 									<ul class="form-check list-group list-group-flush">
 										<li class="list-group-item">
-											<input class="form-check-input" type="radio" name="size-and-crust" id="hand-tossed-small" value="hand-tossed-small" required>
+											<input class="form-check-input" type="radio" name="size-and-crust" id="hand-tossed-small" value="hand-tossed-small" required oninvalid="alert('You must select a crust!');">
 											<label class="form-check-label" for="hand-tossed-small"> Small (10")</label>
 										</li>
 										<li class="list-group-item">
@@ -123,7 +123,8 @@
 									<div class="form-group">
 										<label for="cheese">How Much?</label>
 										<select class="form-control" name="cheese" id="cheese">
-											<option value="none">None</option>
+											<option value="no-cheese">None</option>
+											<option value="light">Light</option>
 											<option value="regular" selected>Regular</option>
 											<option value="extra">Extra</option>
 										</select>
@@ -140,13 +141,18 @@
 											<label for="sauce-type">What Type?</label>
 											<select class="form-control" name="sauce-type" id="sauce-type">
 												<option value="fresh" selected>Robust Inspired Tomato Sauce</option>
-												<option value="canned">Canned Tomato Sauce</option>
+												<option value="marinara">Hearty Marinara Sauce</option>
+												<option value="bbq">Honey BBQ Sauce</option>
+												<option value="parmesan">Garlic Parmesan Sauce</option>
+												<option value="alfredo">Alfredo Sauce</option>
+												<option value="ranch">Ranch</option>
 											</select>
 										</li>
 										<li class="list-group-item form-group">
 											<label for="sauce-amount">How Much?</label>
-											<select class="form-control" id="sauce-amount">
-												<option value="none">None</option>
+											<select class="form-control" name="sauce-amount" id="sauce-amount">
+												<option value="no-sauce">None</option>
+												<option value="light">Light</option>
 												<option value="regular" selected>Regular</option>
 												<option value="extra">Extra</option>
 											</select>
