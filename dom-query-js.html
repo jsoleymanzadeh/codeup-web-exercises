@@ -62,10 +62,10 @@
 		});
 		document.getElementById("btn3").addEventListener("click", function () {
 			let listItems = document.getElementsByTagName("li");
-			for (let i = 1; i < listItems.length; i += 2) {
-				listItems[i].style.color = "gray";
-			}
 			for (let i = 0; i < listItems.length; i++) {
+				if(i % 2 === 1) {
+					listItems[i].style.color = "gray";
+				}
 				if (listItems[i].getAttribute("data-dbid") === "1") {
 					listItems[i].style.color = "blue";
 				}
