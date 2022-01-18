@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+	<div class="film-series" id="fast-furious-series">
+		<h1 class="series-header">Fast & Furious</h1>
+		<p class="series-summary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam blanditiis cumque, doloribus ea eius,
+			eligendi expedita, iste iure minima pariatur placeat ratione temporibus voluptate. Aut commodi libero minus
+			natus porro.</p>
+		<ul class="film-list" id="fast-furious-list">
+			<li class="film" id="fast-furious-1">The Fast and the Furious</li>
+			<li class="film" id="fast-furious-2">2 Fast 2 Furious</li>
+			<li class="film" id="fast-furious-3">The Fast and the Furious: Tokyo Drift</li>
+			<li class="film" id="fast-furious-4">Fast & Furious</li>
+			<li class="film" id="fast-furious-5">Fast Five</li>
+			<li class="film" id="fast-furious-6">Fast & Furious 6</li>
+			<li class="film" id="fast-furious-7">Furious 7</li>
+			<li class="film" id="fast-furious-8">The Fate of the Furious</li>
+			<li class="film" id="fast-furious-9">F9</li>
+		</ul>
+	</div>
+	<div class="film-series" id="harry-potter-series">
+		<h1 class="series-header">Harry Potter</h1>
+		<p class="series-summary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur earum eligendi iste non similique unde voluptatum! A accusantium aperiam, aspernatur, commodi cupiditate impedit laborum, magni omnis quisquam repellat sapiente vel.</p>
+		<ul class="film-list" id="harry-potter-list">
+			<li class="film" id="harry-potter-1">Harry Potter and the Philosopher's Stone</li>
+			<li class="film" id="harry-potter-2">Harry Potter and the Chamber of Secrets</li>
+			<li class="film" id="harry-potter-3">Harry Potter and the Prisoner of Azkaban</li>
+			<li class="film" id="harry-potter-4">Harry Potter and the Goblet of Fire</li>
+			<li class="film" id="harry-potter-5">Harry Potter and the Order of the Phoenix</li>
+			<li class="film" id="harry-potter-6">Harry Potter and the Half-Blood Prince</li>
+			<li class="film" id="harry-potter-7">Harry Potter and the Deathly Hallows – Part 1</li>
+			<li class="film" id="harry-potter-8">Harry Potter and the Deathly Hallows – Part 2</li>
+		</ul>
+	</div>
+	<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+	<script>
+		"use strict";
+		$(document).ready(function () {
+			$("li").css("font-size", "20px");
+			$("h1, p, li").css("background", "yellow");
+			alert($("h1").html());
+		})
+	</script>
+</body>
+</html>
