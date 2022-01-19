@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+	<title>Konami Code</title>
+</head>
+<body>
+	<h1>Konami Code</h1>
+	<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+	<script>
+		"use strict";
+		let inputs = [];
+		let konamiCode = ["arrowup", "arrowup", "arrowdown", "arrowdown", "arrowleft", "arrowright", "arrowleft", "arrowright", "b", "a", "enter"];
+		let goodCode = false;
+		$(document).keyup(function (event) {
+			inputs.push(event.key.toLowerCase());
+			inputs.forEach(function (input, index) {
+					if (input === konamiCode[index]) {
+						goodCode = true;
+					} else {
+						goodCode = false;
+						inputs.length = 0;
+					}
+				});
+			if (goodCode === true && inputs.length === 11) {
+				alert("You have added 30 lives!");
+				goodCode = false;
+				inputs.length = 0;
+			}
+		});
+	</script>
+</body>
+</html>
