@@ -8,10 +8,10 @@
 </head>
 <body>
 	<div class="film-series" id="fast-furious-series">
-		<h1 class="series-header">Fast & Furious</h1>
-		<p class="series-summary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam blanditiis cumque, doloribus ea eius,
-			eligendi expedita, iste iure minima pariatur placeat ratione temporibus voluptate. Aut commodi libero minus
-			natus porro.</p>
+		<h1 class="series-name">Fast & Furious</h1>
+		<p class="series-summary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam blanditiis cumque,
+			doloribus ea eius, eligendi expedita, iste iure minima pariatur placeat ratione temporibus voluptate. Aut
+			commodi libero minus natus porro.</p>
 		<ul class="film-list" id="fast-furious-list">
 			<li class="film" id="fast-furious-1">The Fast and the Furious</li>
 			<li class="film" id="fast-furious-2">2 Fast 2 Furious</li>
@@ -25,8 +25,10 @@
 		</ul>
 	</div>
 	<div class="film-series" id="harry-potter-series">
-		<h1 class="series-header">Harry Potter</h1>
-		<p class="series-summary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur earum eligendi iste non similique unde voluptatum! A accusantium aperiam, aspernatur, commodi cupiditate impedit laborum, magni omnis quisquam repellat sapiente vel.</p>
+		<h1 class="series-name">Harry Potter</h1>
+		<p class="series-summary">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur earum eligendi
+			iste non similique unde voluptatum! A accusantium aperiam, aspernatur, commodi cupiditate impedit laborum,
+			magni omnis quisquam repellat sapiente vel.</p>
 		<ul class="film-list" id="harry-potter-list">
 			<li class="film" id="harry-potter-1">Harry Potter and the Philosopher's Stone</li>
 			<li class="film" id="harry-potter-2">Harry Potter and the Chamber of Secrets</li>
@@ -42,10 +44,18 @@
 	<script>
 		"use strict";
 		$(document).ready(function () {
-			$("li").css("font-size", "20px");
-			$("h1, p, li").css("background", "yellow");
-			alert($("h1").html());
-		})
+			$("h1").click(function () {
+				$(this).css("background-color", "yellow");
+			});
+			$("p").dblclick(function () {
+				$(this).css("font-size", "18px");
+			});
+			$("li").hover(function () {
+				$(this).css("color", "red");
+			}, function () {
+				$(this).css("color", "black");
+			});
+		});
 	</script>
 </body>
 </html>
