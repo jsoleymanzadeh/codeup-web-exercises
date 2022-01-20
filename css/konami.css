@@ -7,3 +7,7 @@ body {
 #titleSprite {
 	width: 239px;
 }
+
+#extraLives {
+	visibility: hidden;
+}

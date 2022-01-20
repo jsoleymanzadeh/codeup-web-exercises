@@ -16,7 +16,7 @@
 				<h5>PLAY SELECT</h5>
 				<h5>1 PLAYER</h5>
 				<h5>2 PLAYERS</h5>
-				<h5 id="extraLives"></h5>
+				<h5 id="extraLives">LIFE +30</h5>
 			</div>
 			<div class="col text-left">
 				<img id="titleSprite" src="img/title-screen-sprite.png" alt="title screen sprite">
@@ -49,13 +49,13 @@
 				}
 			});
 			if (goodCode === true && inputs.length === 11) {
-				$("#extraLives").html("LIFE +30");
+				$("#extraLives").css("visibility", "visible");
 				let blink = 0;
 				let intervalId = setInterval(function () {
 					if (blink % 2 === 1) {
-						$("#extraLives").html("LIFE +30");
+						$("#extraLives").css("visibility", "visible");
 					} else {
-						$("#extraLives").html("");
+						$("#extraLives").css("visibility", "hidden");
 					}
 					blink++;
 					if (blink === 5) {
