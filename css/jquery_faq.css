@@ -5,3 +5,31 @@
 .highlighted {
 	background: yellow;
 }
+
+#frames {
+	display: flex;
+	justify-content: space-around;
+}
+
+.frame {
+	width: 384px;
+	height: 224px;
+	border: solid brown 5px;
+}
+
+#frame1 {
+	background: url("../img/picture1.png");
+}
+
+#frame2 {
+	background: url("../img/picture2.png");
+}
+
+#frame3 {
+	background: url("../img/picture3.png");
+}
+
+#swapButtons {
+	display: flex;
+	justify-content: space-around;
+}

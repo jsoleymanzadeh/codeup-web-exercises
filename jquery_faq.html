@@ -90,6 +90,16 @@
 		</li>
 	</ul>
 	<button id="highlightButton">Highlight Last Facts</button>
+	<div id="frames">
+		<div id="frame1" class="frame"></div>
+		<div id="frame2" class="frame"></div>
+		<div id="frame3" class="frame"></div>
+	</div>
+	<div id="swapButtons">
+		<button id="button1">Swap</button>
+		<button id="button2">Swap</button>
+		<button id="button3">Swap</button>
+	</div>
 	<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
 	<script>
 		"use strict";
@@ -103,15 +113,41 @@
 				$(this).toggleClass("highlighted");
 			});
 			$("#highlightButton").click(function () {
-				$("ul").each(function() {
+				$("ul").each(function () {
 					$(this).children().last().toggleClass("highlighted");
 				});
 			});
-			$("h3").click(function() {
+			$("h3").click(function () {
 				$(this).next().css("font-weight", "bold");
 			});
-			$("li").click(function() {
+			$("li").click(function () {
 				$(this).parent().children().first().css("color", "blue");
+			});
+			let frame1 = $("#frame1");
+			let frame2 = $("#frame2");
+			let frame3 = $("#frame3");
+			$("#button1").click(function () {
+				let temp = frame2.css("background");
+				frame2.css("background", frame1.css("background"));
+				frame1.css("background", temp);
+			});
+			$("#button3").click(function () {
+				let temp = frame2.css("background");
+				frame2.css("background", frame3.css("background"));
+				frame3.css("background", temp);
+			});
+			$("#button2").click(function () {
+				// let temp = $("#frame2").css("background");
+				let coinFlip = Math.floor(Math.random() * 2);
+				if (coinFlip === 0) {
+					let temp = frame1.css("background");
+					frame1.css("background", frame2.css("background"));
+					frame2.css("background", temp);
+				} else {
+					let temp = frame3.css("background");
+					frame3.css("background", frame2.css("background"));
+					frame2.css("background", temp);
+				}
 			});
 		});
 	</script>
