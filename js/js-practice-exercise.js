@@ -10,4 +10,11 @@ function checkCase(input) {
 	}
 }
 
-checkCase("bJI*ENsd4fRAIR5VIrsRFA-ijgRar");
+function returnSum(input) {
+	let numbers = input.split("");
+	let totalSum = 0;
+	numbers.forEach(function (number) {
+		totalSum += Number(number);
+	});
+	return totalSum;
+}
