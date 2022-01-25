@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Document</title>
+	<title>National Parks FAQ</title>
 	<link rel="stylesheet" href="css/jquery_faq.css">
 </head>
 <body>
@@ -62,7 +62,7 @@
 			</ul>
 		</dd>
 	</dl>
-	<a href="#" id="reveal">Show Answers</a>
+	<a href="#" id="reveal">Answers</a>
 	<h3>Big Bend</h3>
 	<ul>
 		<li>The one location where you can count on seeing water in the park is along the Rio Grande—an oasis that’s
@@ -107,7 +107,6 @@
 			$("#reveal").click(function (event) {
 				event.preventDefault();
 				$("dd").toggleClass("invisible");
-				$(this).html("Hide Answers");
 			});
 			$("dt").click(function () {
 				$(this).toggleClass("highlighted");
