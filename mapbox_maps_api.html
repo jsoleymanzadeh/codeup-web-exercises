@@ -9,7 +9,15 @@
 	<link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet'/>
 </head>
 <body>
+	<input type="text" id="userSearch">
+	<button id="searchButton">Search</button>
+	<button id="markerDeleteButton">Delete Markers</button>
+	<select name="zoom" id="zoomSelect">
+		<option value="default" selected>Zoom</option>
+	</select>
 	<div id='map' style='width: 100%; height: 600px;'></div>
+	<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+	<script src="js/mapbox-geocoder-utils.js"></script>
 	<script>
 		"use strict";
 		mapboxgl.accessToken = 'pk.eyJ1IjoianNvbGV5bWFuemFkZWgiLCJhIjoiY2t5c3c4bTgyMDFiczJucW56c2ZoanZsbSJ9.PlX8l7UHAOw4tYWWEIBB6w';
@@ -19,19 +27,37 @@
 			center: [-74.5, 40], // starting position [lng, lat]
 			zoom: 13 // starting zoom
 		});
-
-		function geocode(search, token) {
-			let baseUrl = 'https://api.mapbox.com';
-			let endPoint = '/geocoding/v5/mapbox.places/';
-			return fetch(baseUrl + endPoint + encodeURIComponent(search) + '.json' + "?" + 'access_token=' + token)
-				.then(function (res) {
-					return res.json();
-					// to get all the data from the request, comment out the following three lines...
-				}).then(function (data) {
-					return data.features[0].center;
-				});
+		let zoomSelector = $("#zoomSelect");
+		for (let i = 1; i < 23; i++) {
+			zoomSelector.append('<option value="' + i + '">' + Math.floor(100 * i / 22) + '%</option>')
 		}
-
+		zoomSelector.change(function () {
+			if ($(this).val() !== "default") {
+				map.zoomTo($(this).val());
+			}
+		});
+		$("#searchButton").click(function () {
+			geocode($("#userSearch").val(), mapboxgl.accessToken).then(function (result) {
+				map.setCenter(result);
+				let marker = new mapboxgl.Marker().setLngLat(result).addTo(map);
+				allMarkers.push(marker);
+				let address;
+				reverseGeocode({
+					lng: result[0],
+					lat: result[1]
+				}, mapboxgl.accessToken).then(function (result) {
+					address = result;
+					let popup = new mapboxgl.Popup().setHTML("<h3>" + address + "</h3>");
+					marker.setPopup(popup);
+				});
+			});
+		});
+		let allMarkers = [];
+		$("#markerDeleteButton").click(function () {
+			allMarkers.forEach(function (marker) {
+				marker.remove();
+			});
+		});
 		geocode("San Antonio", mapboxgl.accessToken).then(function (result) {
 			map.setCenter(result);
 		});
@@ -59,6 +85,7 @@
 		favoriteRestaurants.forEach(function (restaurant) {
 			geocode(restaurant.address, mapboxgl.accessToken).then(function (result) {
 				let marker = new mapboxgl.Marker().setLngLat(result).addTo(map);
+				allMarkers.push(marker);
 				let popup = new mapboxgl.Popup().setHTML("<dl><dt><h3>" + restaurant.name + "</h3></dt><dd>" + restaurant.type + "</dd><dt>Address</dt><dd>" + restaurant.address + "</dd><dt>Hours</dt><dd>" + restaurant.hours + "</dd><dt>Phone</dt><dd>" + restaurant.phone + "</dd></dl>");
 				marker.setPopup(popup);
 			});
