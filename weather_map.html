@@ -9,67 +9,68 @@
 </head>
 <body>
 	<div class="container">
-		<section id="currentWeather">
-			<h1>Current Weather</h1>
-			<div id="currentTemp"></div>
-		</section>
-		<section id="forecast">
-			<h1>5-Day Forecast</h1>
-		</section>
+		<h1>5-Day Forecast</h1>
+		<section id="forecast" class="row"></section>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
 	<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
 	<script>
 		"use strict";
-
-		function findDay(timestamp) {
-			let date = new Date(timestamp * 1000);
-			return date.getDay();
-		}
-
-		function findDate(timestamp) {
-			let date = new Date(timestamp * 1000);
-			return date.toDateString();
-		}
-
-		function findTime(timestamp) {
-			let date = new Date(timestamp * 1000);
-			return date.toLocaleTimeString();
-		}
-
-		$.get("http://api.openweathermap.org/data/2.5/weather", {
-			APPID: "6e012c72dafdbe01041ba5e6cc13c62b",
-			id: 4726206,
-			units: "imperial"
-		}).done(function (data) {
-			console.log(data);
-		});
-		$.get("http://api.openweathermap.org/data/2.5/forecast", {
-			APPID: "6e012c72dafdbe01041ba5e6cc13c62b",
-			id: 4726206,
-			units: "imperial"
-		}).done(function (data) {
-			console.log(data);
-			let firstDay = findDay(data.list[0].dt);
-			for (let i = 0; i < 5; i++) {
-				let card = document.createElement("div");
-				card.setAttribute("class", "card");
-				card.setAttribute("id", (i + firstDay).toString());
-				$("#forecast").append(card);
+		$(document).ready(function () {
+			function findDay(timestamp) {
+				let date = new Date(timestamp * 1000);
+				return date.getDay();
 			}
-			data.list.forEach(function (forecast) {
-				let forecastDate = forecast.dt;
-				let day = findDay(forecastDate);
-				if (!document.getElementById("day" + day)) {
-					let dateHeader = document.createElement("h2");
-					dateHeader.setAttribute("id", "day" + day);
-					dateHeader.innerText = findDate(forecastDate);
-					$("#" + day.toString()).append(dateHeader);
+
+			function findDate(timestamp) {
+				let date = new Date(timestamp * 1000);
+				return date.toDateString();
+			}
+
+			$.get("https://api.openweathermap.org/data/2.5/onecall", {
+				appid: "6e012c72dafdbe01041ba5e6cc13c62b",
+				lat: 29.4241,
+				lon: -98.4936,
+				units: "imperial"
+			}).done(function (data) {
+				console.log(data);
+				let firstDay = findDay(data.daily[0].dt);
+				for (let i = 0; i < 5; i++) {
+					let card = document.createElement("div");
+					card.setAttribute("class", "card, col");
+					let day = i + firstDay;
+					if (day > 6) {
+						day -= 7;
+					}
+					card.setAttribute("id", "day" + day);
+					$("#forecast").append(card);
 				}
-				let forecastOfDay = document.createElement("div");
-				forecastOfDay.innerHTML = findTime(forecastDate) + " " + Math.floor(forecast.main.temp) + "&#8457;";
-				$("#day" + day).append(forecastOfDay);
+				data.daily.forEach(function (forecast) {
+					let forecastDate = forecast.dt;
+					let day = findDay(forecastDate);
+					if (!document.getElementById("day" + day + "date")) {
+						let dateHeader = document.createElement("div");
+						dateHeader.setAttribute("class", "card-title")
+						dateHeader.setAttribute("id", "day" + day + "date");
+						dateHeader.innerText = findDate(forecastDate);
+						$("#day" + day).append(dateHeader);
+					}
+					if (!document.getElementById("day" + day + "temp")) {
+						let dailyTemp = document.createElement("div");
+						dailyTemp.setAttribute("class", "card-text")
+						dailyTemp.setAttribute("id", "day" + day + "temp");
+						dailyTemp.innerHTML = Math.floor(forecast.temp.min) + "&#8457;" + " / " + Math.floor(forecast.temp.max) + "&#8457;";
+						$("#day" + day).append(dailyTemp);
+					}
+					if (!document.getElementById("day" + day + "humidity")) {
+						let dailyHumidity = document.createElement("div");
+						dailyHumidity.setAttribute("class", "card-text")
+						dailyHumidity.setAttribute("id", "day" + day + "humidity");
+						dailyHumidity.innerHTML = "Humidity: " + forecast.humidity;
+						$("#day" + day).append(dailyHumidity);
+					}
+				});
 			});
 		});
 	</script>
