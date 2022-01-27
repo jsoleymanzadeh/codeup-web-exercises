@@ -19,11 +19,6 @@
 	<script>
 		"use strict";
 		$(document).ready(function () {
-			function findDay(timestamp) {
-				let date = new Date(timestamp * 1000);
-				return date.getDay();
-			}
-
 			function findDate(timestamp) {
 				let date = new Date(timestamp * 1000);
 				return date.toDateString();
@@ -36,48 +31,43 @@
 				units: "imperial"
 			}).done(function (data) {
 				console.log(data);
-				let firstDay = findDay(data.daily[0].dt);
+				let fiveDays = [];
 				for (let i = 0; i < 5; i++) {
+					fiveDays.push(data.daily[i]);
 					let card = document.createElement("div");
 					card.setAttribute("class", "card, col");
-					let day = i + firstDay;
-					if (day > 6) {
-						day -= 7;
-					}
-					card.setAttribute("id", "day" + day);
+					card.setAttribute("id", "day" + i);
 					$("#forecast").append(card);
 				}
-				data.daily.forEach(function (forecast) {
+				console.log(fiveDays);
+				fiveDays.forEach(function (forecast, index) {
+					let dayDiv = $("#day" + index);
 					let forecastDate = forecast.dt;
-					let day = findDay(forecastDate);
-					if (!document.getElementById("day" + day + "date")) {
-						let dateHeader = document.createElement("div");
-						dateHeader.setAttribute("class", "card-title")
-						dateHeader.setAttribute("id", "day" + day + "date");
-						dateHeader.innerText = findDate(forecastDate);
-						$("#day" + day).append(dateHeader);
-					}
-					if (!document.getElementById("day" + day + "temp")) {
-						let dailyTemp = document.createElement("div");
-						dailyTemp.setAttribute("class", "card-text")
-						dailyTemp.setAttribute("id", "day" + day + "temp");
-						dailyTemp.innerHTML = Math.floor(forecast.temp.min) + "&#8457;" + " / " + Math.floor(forecast.temp.max) + "&#8457;";
-						$("#day" + day).append(dailyTemp);
-					}
-					if (!document.getElementById("day" + day + "humidity")) {
-						let dailyHumidity = document.createElement("div");
-						dailyHumidity.setAttribute("class", "card-text")
-						dailyHumidity.setAttribute("id", "day" + day + "humidity");
-						dailyHumidity.innerHTML = "Humidity: " + forecast.humidity;
-						$("#day" + day).append(dailyHumidity);
-					}
-					if (!document.getElementById("day" + day + "wind")) {
-						let dailyWind = document.createElement("div");
-						dailyWind.setAttribute("class", "card-text")
-						dailyWind.setAttribute("id", "day" + day + "wind");
-						dailyWind.innerHTML = "Wind Speed: " + forecast.wind_speed;
-						$("#day" + day).append(dailyWind);
-					}
+					let dateHeader = document.createElement("div");
+					dateHeader.setAttribute("class", "card-title");
+					dateHeader.setAttribute("id", "day" + index + "date");
+					dateHeader.innerText = findDate(forecastDate);
+					dayDiv.append(dateHeader);
+					let dailyTemp = document.createElement("div");
+					dailyTemp.setAttribute("class", "card-text");
+					dailyTemp.setAttribute("id", "day" + index + "temp");
+					dailyTemp.innerHTML = Math.floor(forecast.temp.min) + "&#8457;" + " / " + Math.floor(forecast.temp.max) + "&#8457;";
+					dayDiv.append(dailyTemp);
+					let dailyHumidity = document.createElement("div");
+					dailyHumidity.setAttribute("class", "card-text");
+					dailyHumidity.setAttribute("id", "day" + index + "humidity");
+					dailyHumidity.innerHTML = "Humidity: " + forecast.humidity;
+					dayDiv.append(dailyHumidity);
+					let dailyWind = document.createElement("div");
+					dailyWind.setAttribute("class", "card-text");
+					dailyWind.setAttribute("id", "day" + index + "wind");
+					dailyWind.innerHTML = "Wind Speed: " + forecast.wind_speed;
+					dayDiv.append(dailyWind);
+					let dailyPressure = document.createElement("div");
+					dailyPressure.setAttribute("class", "card-text");
+					dailyPressure.setAttribute("id", "day" + index + "pressure");
+					dailyPressure.innerHTML = "Pressure: " + forecast.pressure;
+					dayDiv.append(dailyPressure);
 				});
 			});
 		});
