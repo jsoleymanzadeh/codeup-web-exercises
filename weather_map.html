@@ -6,15 +6,21 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Weather Map Project</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+	<script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+	<link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet'/>
 </head>
 <body>
 	<div class="container">
-		<h1>5-Day Forecast</h1>
+		<label for="userInput">Place <input type="text" id="userInput"></label>
+		<button class="btn btn-primary" id="searchButton">Search</button>
+		<div>Current Location: <span id="current"></span></div>
 		<section id="forecast" class="row"></section>
+		<div id='map' style='width: 100%; height: 300px;'></div>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
 	<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+	<script src="js/mapbox-geocoder-utils.js"></script>
 	<script src="js/keys.js"></script>
 	<script>
 		"use strict";
@@ -24,50 +30,116 @@
 				return date.toDateString();
 			}
 
-			$.get("https://api.openweathermap.org/data/2.5/onecall", {
-				appid: OPEN_WEATHER_APPID,
-				lat: 29.4241,
-				lon: -98.4936,
-				units: "imperial"
-			}).done(function (data) {
-				console.log(data);
-				let fiveDays = [];
-				for (let i = 0; i < 5; i++) {
-					fiveDays.push(data.daily[i]);
-					let card = document.createElement("div");
-					card.setAttribute("class", "card, col");
-					card.setAttribute("id", "day" + i);
-					$("#forecast").append(card);
+			function getWeatherFromCoord(place) {
+				$.get("https://api.openweathermap.org/data/2.5/onecall", {
+					appid: WEATHER_MAP_OPEN_WEATHER_APPID,
+					lat: place.coord.lat,
+					lon: place.coord.lon,
+					units: "imperial"
+				}).done(function (data) {
+					let forecastSection = $("#forecast");
+					forecastSection.html("");
+					let fiveDays = [];
+					for (let i = 0; i < 5; i++) {
+						fiveDays.push(data.daily[i]);
+						let column = document.createElement("div");
+						column.setAttribute("class", "col");
+						column.setAttribute("id", "column" + i);
+						forecastSection.append(column);
+						let card = document.createElement("div");
+						card.setAttribute("class", "card");
+						card.setAttribute("id", "day" + i);
+						$("#column" + i).append(card);
+						let cardBody = document.createElement("ul");
+						cardBody.setAttribute("class", "list-group list-group-flush");
+						$("#day" + i).append(cardBody);
+					}
+					fiveDays.forEach(function (forecast, index) {
+						let dayList = $("#day" + index + " > .list-group");
+						let forecastDate = forecast.dt;
+						let dateHeader = document.createElement("div");
+						dateHeader.setAttribute("class", "card-header");
+						dateHeader.innerText = findDate(forecastDate);
+						$("#day" + index).prepend(dateHeader);
+						let dailyTemp = document.createElement("li");
+						dailyTemp.setAttribute("class", "list-group-item");
+						dailyTemp.innerHTML = Math.floor(forecast.temp.min) + "&#8457;" + " / " + Math.floor(forecast.temp.max) + "&#8457;";
+						dayList.append(dailyTemp);
+						let weatherIcon = document.createElement("img");
+						weatherIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + forecast.weather[0].icon + ".png");
+						weatherIcon.setAttribute("style", "height: 50px; width: 50px");
+						weatherIcon.setAttribute("class", "mx-auto");
+						dayList.append(weatherIcon);
+						let dayDescription = document.createElement("li");
+						dayDescription.setAttribute("class", "list-group-item text-center");
+						dayDescription.innerHTML = forecast.weather[0].description;
+						dayList.append(dayDescription);
+						let dailyHumidity = document.createElement("li");
+						dailyHumidity.setAttribute("class", "list-group-item");
+						dailyHumidity.innerHTML = "Humidity: " + forecast.humidity;
+						dayList.append(dailyHumidity);
+						let dailyWind = document.createElement("li");
+						dailyWind.setAttribute("class", "list-group-item");
+						dailyWind.innerHTML = "Wind Speed: " + forecast.wind_speed;
+						dayList.append(dailyWind);
+						let dailyPressure = document.createElement("li");
+						dailyPressure.setAttribute("class", "list-group-item");
+						dailyPressure.innerHTML = "Pressure: " + forecast.pressure;
+						dayList.append(dailyPressure);
+					});
+				});
+			}
+
+			function getWeather(place) {
+				$.get("https://api.openweathermap.org/data/2.5/weather", {
+					appid: WEATHER_MAP_OPEN_WEATHER_APPID,
+					q: place
+				}).done(function (data) {
+					$("#current").text(data.name + ", " + data.sys.country);
+					getWeatherFromCoord(data);
+					geocode(place, mapboxgl.accessToken).then(function (result) {
+						map.setCenter(result);
+						new mapboxgl.Marker().setLngLat(result).addTo(map);
+					});
+				});
+			}
+
+			function checkUserInput() {
+				if (!userInput.val()) {
+					alert("Please input a location.");
+				} else {
+					getWeather(userInput.val());
 				}
-				console.log(fiveDays);
-				fiveDays.forEach(function (forecast, index) {
-					let dayDiv = $("#day" + index);
-					let forecastDate = forecast.dt;
-					let dateHeader = document.createElement("div");
-					dateHeader.setAttribute("class", "card-title");
-					dateHeader.setAttribute("id", "day" + index + "date");
-					dateHeader.innerText = findDate(forecastDate);
-					dayDiv.append(dateHeader);
-					let dailyTemp = document.createElement("div");
-					dailyTemp.setAttribute("class", "card-text");
-					dailyTemp.setAttribute("id", "day" + index + "temp");
-					dailyTemp.innerHTML = Math.floor(forecast.temp.min) + "&#8457;" + " / " + Math.floor(forecast.temp.max) + "&#8457;";
-					dayDiv.append(dailyTemp);
-					let dailyHumidity = document.createElement("div");
-					dailyHumidity.setAttribute("class", "card-text");
-					dailyHumidity.setAttribute("id", "day" + index + "humidity");
-					dailyHumidity.innerHTML = "Humidity: " + forecast.humidity;
-					dayDiv.append(dailyHumidity);
-					let dailyWind = document.createElement("div");
-					dailyWind.setAttribute("class", "card-text");
-					dailyWind.setAttribute("id", "day" + index + "wind");
-					dailyWind.innerHTML = "Wind Speed: " + forecast.wind_speed;
-					dayDiv.append(dailyWind);
-					let dailyPressure = document.createElement("div");
-					dailyPressure.setAttribute("class", "card-text");
-					dailyPressure.setAttribute("id", "day" + index + "pressure");
-					dailyPressure.innerHTML = "Pressure: " + forecast.pressure;
-					dayDiv.append(dailyPressure);
+			}
+
+			mapboxgl.accessToken = WEATHER_MAP_MAPBOX_KEY;
+			const map = new mapboxgl.Map({
+				container: 'map', // container ID
+				style: 'mapbox://styles/mapbox/streets-v11', // style URL
+				center: [-74.5, 40], // starting position [lng, lat]
+				zoom: 10 // starting zoom
+			});
+			let userInput = $("#userInput");
+			getWeather("San Antonio, US");
+			$("#searchButton").click(function () {
+				checkUserInput();
+			});
+			userInput.on("keypress", function (e) {
+				if (e.keyCode === 13) {
+					checkUserInput();
+				}
+			});
+			map.on("click", function (e) {
+				let latitude = e.lngLat.lat;
+				let longitude = e.lngLat.lng;
+				getWeatherFromCoord({coord: {lat: latitude, lon: longitude}});
+				new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+				reverseGeocode({lng: longitude, lat: latitude}, mapboxgl.accessToken).then(function (result) {
+					let locationName = result.features[0].place_name;
+					if (result.features[3].place_name) {
+						locationName = result.features[3].place_name;
+					}
+					$("#current").text(locationName);
 				});
 			});
 		});

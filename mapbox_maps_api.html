@@ -21,7 +21,7 @@
 	<script src="js/mapbox-geocoder-utils.js"></script>
 	<script>
 		"use strict";
-		mapboxgl.accessToken = MAPBOX_KEY;
+		mapboxgl.accessToken = RESTAURANT_MAP_MAPBOX_KEY;
 		const map = new mapboxgl.Map({
 			container: 'map', // container ID
 			style: 'mapbox://styles/mapbox/streets-v11', // style URL
@@ -47,7 +47,7 @@
 					lng: result[0],
 					lat: result[1]
 				}, mapboxgl.accessToken).then(function (result) {
-					address = result;
+					address = result.features[0].place_name;
 					let popup = new mapboxgl.Popup().setHTML("<h3>" + address + "</h3>");
 					marker.setPopup(popup);
 				});
