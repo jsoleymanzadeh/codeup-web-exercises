@@ -33,8 +33,8 @@
 			function getWeatherFromCoord(place) {
 				$.get("https://api.openweathermap.org/data/2.5/onecall", {
 					appid: WEATHER_MAP_OPEN_WEATHER_APPID,
-					lat: place.coord.lat,
 					lon: place.coord.lon,
+					lat: place.coord.lat,
 					units: "imperial"
 				}).done(function (data) {
 					let forecastSection = $("#forecast");
@@ -130,9 +130,9 @@
 				}
 			});
 			map.on("click", function (e) {
-				let latitude = e.lngLat.lat;
 				let longitude = e.lngLat.lng;
-				getWeatherFromCoord({coord: {lat: latitude, lon: longitude}});
+				let latitude = e.lngLat.lat;
+				getWeatherFromCoord({coord: {lon: longitude, lat: latitude}});
 				new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
 				reverseGeocode({lng: longitude, lat: latitude}, mapboxgl.accessToken).then(function (result) {
 					let locationName = result.features[0].place_name;
