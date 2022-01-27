@@ -17,10 +17,11 @@
 	</select>
 	<div id='map' style='width: 100%; height: 600px;'></div>
 	<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+	<script src="js/keys.js"></script>
 	<script src="js/mapbox-geocoder-utils.js"></script>
 	<script>
 		"use strict";
-		mapboxgl.accessToken = 'pk.eyJ1IjoianNvbGV5bWFuemFkZWgiLCJhIjoiY2t5c3c4bTgyMDFiczJucW56c2ZoanZsbSJ9.PlX8l7UHAOw4tYWWEIBB6w';
+		mapboxgl.accessToken = MAPBOX_KEY;
 		const map = new mapboxgl.Map({
 			container: 'map', // container ID
 			style: 'mapbox://styles/mapbox/streets-v11', // style URL
