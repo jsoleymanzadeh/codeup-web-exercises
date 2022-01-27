@@ -87,7 +87,16 @@
 						dailyPressure.innerHTML = "Pressure: " + forecast.pressure;
 						dayList.append(dailyPressure);
 					});
+					userInput.val("");
 				});
+			}
+
+			function checkUserInput() {
+				if (!userInput.val()) {
+					alert("Please input a location.");
+				} else {
+					getWeather(userInput.val());
+				}
 			}
 
 			function getWeather(place) {
@@ -99,17 +108,11 @@
 					getWeatherFromCoord(data);
 					geocode(place, mapboxgl.accessToken).then(function (result) {
 						map.setCenter(result);
-						new mapboxgl.Marker().setLngLat(result).addTo(map);
+						let marker = new mapboxgl.Marker().setLngLat(result).addTo(map);
+						let popup = new mapboxgl.Popup().setHTML(data.name + ", " + data.sys.country);
+						marker.setPopup(popup);
 					});
 				});
-			}
-
-			function checkUserInput() {
-				if (!userInput.val()) {
-					alert("Please input a location.");
-				} else {
-					getWeather(userInput.val());
-				}
 			}
 
 			mapboxgl.accessToken = WEATHER_MAP_MAPBOX_KEY;
@@ -125,21 +128,23 @@
 				checkUserInput();
 			});
 			userInput.on("keypress", function (e) {
-				if (e.keyCode === 13) {
+				if (e.key === "Enter") {
 					checkUserInput();
 				}
 			});
-			map.on("click", function (e) {
+			map.on("dblclick", function (e) {
 				let longitude = e.lngLat.lng;
 				let latitude = e.lngLat.lat;
 				getWeatherFromCoord({coord: {lon: longitude, lat: latitude}});
-				new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+				let marker = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
 				reverseGeocode({lng: longitude, lat: latitude}, mapboxgl.accessToken).then(function (result) {
 					let locationName = result.features[0].place_name;
 					if (result.features[3].place_name) {
 						locationName = result.features[3].place_name;
 					}
 					$("#current").text(locationName);
+					let popup = new mapboxgl.Popup().setHTML(locationName);
+					marker.setPopup(popup);
 				});
 			});
 		});
