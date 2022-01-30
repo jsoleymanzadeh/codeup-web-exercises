@@ -137,8 +137,10 @@
 				let latitude = e.lngLat.lat;
 				getWeatherFromCoord({coord: {lon: longitude, lat: latitude}});
 				let marker = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+				let locationName = "Unknown Location";
+				$("#current").text(locationName);
 				reverseGeocode({lng: longitude, lat: latitude}, mapboxgl.accessToken).then(function (result) {
-					let locationName = result.features[0].place_name;
+					locationName = result.features[0].place_name;
 					if (result.features[3].place_name) {
 						locationName = result.features[3].place_name;
 					}
