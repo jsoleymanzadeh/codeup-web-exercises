@@ -39,13 +39,14 @@
 		});
 		$("#searchButton").click(function () {
 			geocode($("#userSearch").val(), mapboxgl.accessToken).then(function (result) {
-				map.setCenter(result);
-				let marker = new mapboxgl.Marker().setLngLat(result).addTo(map);
+				let coordinates = result.features[0].center;
+				map.setCenter(coordinates);
+				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 				allMarkers.push(marker);
 				let address;
 				reverseGeocode({
-					lng: result[0],
-					lat: result[1]
+					lng: coordinates[0],
+					lat: coordinates[1]
 				}, mapboxgl.accessToken).then(function (result) {
 					address = result.features[0].place_name;
 					let popup = new mapboxgl.Popup().setHTML("<h3>" + address + "</h3>");
@@ -60,7 +61,7 @@
 			});
 		});
 		geocode("San Antonio", mapboxgl.accessToken).then(function (result) {
-			map.setCenter(result);
+			map.setCenter(result.features[0].center);
 		});
 		let favoriteRestaurants = [
 			{
@@ -85,7 +86,7 @@
 		]
 		favoriteRestaurants.forEach(function (restaurant) {
 			geocode(restaurant.address, mapboxgl.accessToken).then(function (result) {
-				let marker = new mapboxgl.Marker().setLngLat(result).addTo(map);
+				let marker = new mapboxgl.Marker().setLngLat(result.features[0].center).addTo(map);
 				allMarkers.push(marker);
 				let popup = new mapboxgl.Popup().setHTML("<dl><dt><h3>" + restaurant.name + "</h3></dt><dd>" + restaurant.type + "</dd><dt>Address</dt><dd>" + restaurant.address + "</dd><dt>Hours</dt><dd>" + restaurant.hours + "</dd><dt>Phone</dt><dd>" + restaurant.phone + "</dd></dl>");
 				marker.setPopup(popup);
