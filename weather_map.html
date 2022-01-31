@@ -25,16 +25,46 @@
 	<script>
 		"use strict";
 		$(document).ready(function () {
+			// find the date for the forecast
 			function findDate(timestamp) {
 				let date = new Date(timestamp * 1000);
 				return date.toDateString();
 			}
 
+			function addMarkerListeners(marker) {
+				marker.getElement().addEventListener("click", function () {
+					getWeatherFromCoord([marker.getLngLat().lng, marker.getLngLat().lat]);
+					let locationName = "Unknown Location";
+					$("#current").text(locationName);
+					reverseGeocode(marker.getLngLat(), mapboxgl.accessToken).then(function (result) {
+						let names = [];
+						result.features.forEach(function (feature) {
+							switch (feature.place_type[0]) {
+								case "place":
+									names.push(feature.place_name);
+									break;
+								case "district":
+									names.push(feature.place_name);
+									break;
+								case "region":
+									names.push(feature.place_name);
+									break;
+								case "country":
+									names.push(feature.place_name);
+							}
+						});
+						locationName = names[0];
+						$("#current").text(locationName);
+					});
+				});
+			}
+
+			// use OpenWeatherMap API to find weather data of a location given by coordinates and insert to HTML
 			function getWeatherFromCoord(place) {
 				$.get("https://api.openweathermap.org/data/2.5/onecall", {
 					appid: WEATHER_MAP_OPEN_WEATHER_APPID,
-					lon: place.coord.lon,
-					lat: place.coord.lat,
+					lon: place[0],
+					lat: place[1],
 					units: "imperial"
 				}).done(function (data) {
 					let forecastSection = $("#forecast");
@@ -91,6 +121,7 @@
 				});
 			}
 
+			// make sure the user typed something in the input box and alert them if they did not
 			function checkUserInput() {
 				if (!userInput.val()) {
 					alert("Please input a location.");
@@ -99,50 +130,72 @@
 				}
 			}
 
+			// translate user's input into coordinates with Mapbox API for use in OpenWeatherMap API and set a marker at that location
 			function getWeather(place) {
-				$.get("https://api.openweathermap.org/data/2.5/weather", {
-					appid: WEATHER_MAP_OPEN_WEATHER_APPID,
-					q: place
-				}).done(function (data) {
-					$("#current").text(data.name + ", " + data.sys.country);
-					getWeatherFromCoord(data);
-					geocode(place, mapboxgl.accessToken).then(function (result) {
-						map.setCenter(result);
-						let marker = new mapboxgl.Marker().setLngLat(result).addTo(map);
-						let popup = new mapboxgl.Popup().setHTML(data.name + ", " + data.sys.country);
-						marker.setPopup(popup);
-					});
+				geocode(place, mapboxgl.accessToken).then(function (result) {
+					let coordinates = [result.features[0].center[0], result.features[0].center[1]];
+					let placeName = result.features[0].place_name
+					$("#current").text(placeName);
+					getWeatherFromCoord(coordinates);
+					map.flyTo({center: coordinates});
+					let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+					let popup = new mapboxgl.Popup().setHTML(placeName);
+					marker.setPopup(popup);
+					addMarkerListeners(marker);
 				});
 			}
 
+			// create map object for Mapbox API
 			mapboxgl.accessToken = WEATHER_MAP_MAPBOX_KEY;
 			const map = new mapboxgl.Map({
 				container: 'map', // container ID
 				style: 'mapbox://styles/mapbox/streets-v11', // style URL
-				center: [-74.5, 40], // starting position [lng, lat]
+				center: [-98.4951, 29.4246], // starting position [lng, lat]
 				zoom: 10 // starting zoom
 			});
 			let userInput = $("#userInput");
-			getWeather("San Antonio, US");
+			getWeather("San Antonio, Texas, United States");
+			// check the user's input if they click the search button
 			$("#searchButton").click(function () {
 				checkUserInput();
 			});
+			// check the user's input if they press enter while typing in the input box
 			userInput.on("keypress", function (e) {
 				if (e.key === "Enter") {
 					checkUserInput();
 				}
 			});
+			// double-clicking a location on the map gets weather data and places a marker for that location
 			map.on("dblclick", function (e) {
-				let longitude = e.lngLat.lng;
-				let latitude = e.lngLat.lat;
-				getWeatherFromCoord({coord: {lon: longitude, lat: latitude}});
-				let marker = new mapboxgl.Marker().setLngLat([longitude, latitude]).addTo(map);
+				let coordinates = [e.lngLat.lng, e.lngLat.lat];
+				getWeatherFromCoord(coordinates);
+				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+				addMarkerListeners(marker);
 				let locationName = "Unknown Location";
 				$("#current").text(locationName);
-				reverseGeocode({lng: longitude, lat: latitude}, mapboxgl.accessToken).then(function (result) {
-					locationName = result.features[0].place_name;
-					if (result.features[3].place_name) {
-						locationName = result.features[3].place_name;
+				reverseGeocode({
+					lng: coordinates[0],
+					lat: coordinates[1]
+				}, mapboxgl.accessToken).then(function (result) {
+					let names = [];
+					result.features.forEach(function (feature) {
+						switch (feature.place_type[0]) {
+							case "place":
+								names.push(feature.place_name);
+								break;
+							case "district":
+								names.push(feature.place_name);
+								break;
+							case "region":
+								names.push(feature.place_name);
+								break;
+							case "country":
+								names.push(feature.place_name);
+						}
+					});
+					locationName = names[0];
+					if (result.features.length === 0) {
+						locationName = "Unknown Location";
 					}
 					$("#current").text(locationName);
 					let popup = new mapboxgl.Popup().setHTML(locationName);
