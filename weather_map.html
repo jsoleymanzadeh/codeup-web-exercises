@@ -31,34 +31,6 @@
 				return date.toDateString();
 			}
 
-			function addMarkerListeners(marker) {
-				marker.getElement().addEventListener("click", function () {
-					getWeatherFromCoord([marker.getLngLat().lng, marker.getLngLat().lat]);
-					let locationName = "Unknown Location";
-					$("#current").text(locationName);
-					reverseGeocode(marker.getLngLat(), mapboxgl.accessToken).then(function (result) {
-						let names = [];
-						result.features.forEach(function (feature) {
-							switch (feature.place_type[0]) {
-								case "place":
-									names.push(feature.place_name);
-									break;
-								case "district":
-									names.push(feature.place_name);
-									break;
-								case "region":
-									names.push(feature.place_name);
-									break;
-								case "country":
-									names.push(feature.place_name);
-							}
-						});
-						locationName = names[0];
-						$("#current").text(locationName);
-					});
-				});
-			}
-
 			// use OpenWeatherMap API to find weather data of a location given by coordinates and insert to HTML
 			function getWeatherFromCoord(place) {
 				$.get("https://api.openweathermap.org/data/2.5/onecall", {
@@ -96,7 +68,7 @@
 						dailyTemp.innerHTML = Math.floor(forecast.temp.min) + "&#8457;" + " / " + Math.floor(forecast.temp.max) + "&#8457;";
 						dayList.append(dailyTemp);
 						let weatherIcon = document.createElement("img");
-						weatherIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + forecast.weather[0].icon + ".png");
+						weatherIcon.setAttribute("src", "https://openweathermap.org/img/wn/" + forecast.weather[0].icon + ".png");
 						weatherIcon.setAttribute("style", "height: 50px; width: 50px");
 						weatherIcon.setAttribute("class", "mx-auto");
 						dayList.append(weatherIcon);
@@ -141,7 +113,36 @@
 					let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 					let popup = new mapboxgl.Popup().setHTML(placeName);
 					marker.setPopup(popup);
-					addMarkerListeners(marker);
+					addMarkerListener(marker);
+				});
+			}
+
+			// get weather data when a marker is clicked
+			function addMarkerListener(marker) {
+				marker.getElement().addEventListener("click", function () {
+					getWeatherFromCoord([marker.getLngLat().lng, marker.getLngLat().lat]);
+					let locationName = "Unknown Location";
+					$("#current").text(locationName);
+					reverseGeocode(marker.getLngLat(), mapboxgl.accessToken).then(function (result) {
+						let names = [];
+						result.features.forEach(function (feature) {
+							switch (feature.place_type[0]) {
+								case "place":
+									names.push(feature.place_name);
+									break;
+								case "district":
+									names.push(feature.place_name);
+									break;
+								case "region":
+									names.push(feature.place_name);
+									break;
+								case "country":
+									names.push(feature.place_name);
+							}
+						});
+						locationName = names[0];
+						$("#current").text(locationName);
+					});
 				});
 			}
 
@@ -170,7 +171,7 @@
 				let coordinates = [e.lngLat.lng, e.lngLat.lat];
 				getWeatherFromCoord(coordinates);
 				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
-				addMarkerListeners(marker);
+				addMarkerListener(marker);
 				let locationName = "Unknown Location";
 				$("#current").text(locationName);
 				reverseGeocode({
