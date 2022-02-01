@@ -14,6 +14,7 @@
 		<label for="userInput">Place <input type="text" id="userInput"></label>
 		<button class="btn btn-primary" id="searchButton">Search</button>
 		<div>Current Location: <span id="current"></span></div>
+		<button class="btn btn-primary" id="setHome">Set Home</button>
 		<section id="forecast" class="row"></section>
 		<div id='map' style='width: 100%; height: 300px;'></div>
 	</div>
@@ -31,6 +32,59 @@
 				return date.toDateString();
 			}
 
+			function drawForecast(data) {
+				let forecastSection = $("#forecast");
+				forecastSection.html("");
+				let fiveDays = [];
+				for (let i = 0; i < 5; i++) {
+					fiveDays.push(data.daily[i]);
+					let column = document.createElement("div");
+					column.setAttribute("class", "col");
+					column.setAttribute("id", "column" + i);
+					forecastSection.append(column);
+					let card = document.createElement("div");
+					card.setAttribute("class", "card");
+					card.setAttribute("id", "day" + i);
+					$("#column" + i).append(card);
+					let cardBody = document.createElement("ul");
+					cardBody.setAttribute("class", "list-group list-group-flush");
+					$("#day" + i).append(cardBody);
+				}
+				fiveDays.forEach(function (forecast, index) {
+					let dayList = $("#day" + index + " > .list-group");
+					let forecastDate = forecast.dt;
+					let dateHeader = document.createElement("div");
+					dateHeader.setAttribute("class", "card-header");
+					dateHeader.innerText = findDate(forecastDate);
+					$("#day" + index).prepend(dateHeader);
+					let dailyTemp = document.createElement("li");
+					dailyTemp.setAttribute("class", "list-group-item");
+					dailyTemp.innerHTML = Math.floor(forecast.temp.min) + "&#8457;" + " / " + Math.floor(forecast.temp.max) + "&#8457;";
+					dayList.append(dailyTemp);
+					let weatherIcon = document.createElement("img");
+					weatherIcon.setAttribute("src", "https://openweathermap.org/img/wn/" + forecast.weather[0].icon + ".png");
+					weatherIcon.setAttribute("style", "height: 50px; width: 50px");
+					weatherIcon.setAttribute("class", "mx-auto");
+					dayList.append(weatherIcon);
+					let dayDescription = document.createElement("li");
+					dayDescription.setAttribute("class", "list-group-item text-center");
+					dayDescription.innerHTML = forecast.weather[0].description;
+					dayList.append(dayDescription);
+					let dailyHumidity = document.createElement("li");
+					dailyHumidity.setAttribute("class", "list-group-item");
+					dailyHumidity.innerHTML = "Humidity: " + forecast.humidity;
+					dayList.append(dailyHumidity);
+					let dailyWind = document.createElement("li");
+					dailyWind.setAttribute("class", "list-group-item");
+					dailyWind.innerHTML = "Wind Speed: " + forecast.wind_speed;
+					dayList.append(dailyWind);
+					let dailyPressure = document.createElement("li");
+					dailyPressure.setAttribute("class", "list-group-item");
+					dailyPressure.innerHTML = "Pressure: " + forecast.pressure;
+					dayList.append(dailyPressure);
+				});
+			}
+
 			// use OpenWeatherMap API to find weather data of a location given by coordinates and insert to HTML
 			function getWeatherFromCoord(place) {
 				$.get("https://api.openweathermap.org/data/2.5/onecall", {
@@ -39,56 +93,9 @@
 					lat: place[1],
 					units: "imperial"
 				}).done(function (data) {
-					let forecastSection = $("#forecast");
-					forecastSection.html("");
-					let fiveDays = [];
-					for (let i = 0; i < 5; i++) {
-						fiveDays.push(data.daily[i]);
-						let column = document.createElement("div");
-						column.setAttribute("class", "col");
-						column.setAttribute("id", "column" + i);
-						forecastSection.append(column);
-						let card = document.createElement("div");
-						card.setAttribute("class", "card");
-						card.setAttribute("id", "day" + i);
-						$("#column" + i).append(card);
-						let cardBody = document.createElement("ul");
-						cardBody.setAttribute("class", "list-group list-group-flush");
-						$("#day" + i).append(cardBody);
-					}
-					fiveDays.forEach(function (forecast, index) {
-						let dayList = $("#day" + index + " > .list-group");
-						let forecastDate = forecast.dt;
-						let dateHeader = document.createElement("div");
-						dateHeader.setAttribute("class", "card-header");
-						dateHeader.innerText = findDate(forecastDate);
-						$("#day" + index).prepend(dateHeader);
-						let dailyTemp = document.createElement("li");
-						dailyTemp.setAttribute("class", "list-group-item");
-						dailyTemp.innerHTML = Math.floor(forecast.temp.min) + "&#8457;" + " / " + Math.floor(forecast.temp.max) + "&#8457;";
-						dayList.append(dailyTemp);
-						let weatherIcon = document.createElement("img");
-						weatherIcon.setAttribute("src", "https://openweathermap.org/img/wn/" + forecast.weather[0].icon + ".png");
-						weatherIcon.setAttribute("style", "height: 50px; width: 50px");
-						weatherIcon.setAttribute("class", "mx-auto");
-						dayList.append(weatherIcon);
-						let dayDescription = document.createElement("li");
-						dayDescription.setAttribute("class", "list-group-item text-center");
-						dayDescription.innerHTML = forecast.weather[0].description;
-						dayList.append(dayDescription);
-						let dailyHumidity = document.createElement("li");
-						dailyHumidity.setAttribute("class", "list-group-item");
-						dailyHumidity.innerHTML = "Humidity: " + forecast.humidity;
-						dayList.append(dailyHumidity);
-						let dailyWind = document.createElement("li");
-						dailyWind.setAttribute("class", "list-group-item");
-						dailyWind.innerHTML = "Wind Speed: " + forecast.wind_speed;
-						dayList.append(dailyWind);
-						let dailyPressure = document.createElement("li");
-						dailyPressure.setAttribute("class", "list-group-item");
-						dailyPressure.innerHTML = "Pressure: " + forecast.pressure;
-						dayList.append(dailyPressure);
-					});
+					locationForecasts.push(data);
+					currentCoordinates = [data.lon, data.lat];
+					drawForecast(data);
 					userInput.val("");
 				});
 			}
@@ -102,47 +109,35 @@
 				}
 			}
 
+			function getWeatherFromObject(data) {
+				let coordinates = [data.features[0].center[0], data.features[0].center[1]];
+				locationName = data.features[0].place_name;
+				locationNames.push(locationName);
+				currentLocation.text(locationName);
+				getWeatherFromCoord(coordinates);
+				map.flyTo({center: coordinates});
+				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+				let popup = new mapboxgl.Popup().setHTML(locationName);
+				marker.setPopup(popup);
+				addMarkerListener(marker);
+				marker.getElement().setAttribute("data-index", locationForecasts.length);
+			}
+
 			// translate user's input into coordinates with Mapbox API for use in OpenWeatherMap API and set a marker at that location
 			function getWeather(place) {
 				geocode(place, mapboxgl.accessToken).then(function (result) {
-					let coordinates = [result.features[0].center[0], result.features[0].center[1]];
-					let placeName = result.features[0].place_name
-					$("#current").text(placeName);
-					getWeatherFromCoord(coordinates);
-					map.flyTo({center: coordinates});
-					let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
-					let popup = new mapboxgl.Popup().setHTML(placeName);
-					marker.setPopup(popup);
-					addMarkerListener(marker);
+					getWeatherFromObject(result);
 				});
 			}
 
 			// get weather data when a marker is clicked
 			function addMarkerListener(marker) {
 				marker.getElement().addEventListener("click", function () {
-					getWeatherFromCoord([marker.getLngLat().lng, marker.getLngLat().lat]);
-					let locationName = "Unknown Location";
-					$("#current").text(locationName);
-					reverseGeocode(marker.getLngLat(), mapboxgl.accessToken).then(function (result) {
-						let names = [];
-						result.features.forEach(function (feature) {
-							switch (feature.place_type[0]) {
-								case "place":
-									names.push(feature.place_name);
-									break;
-								case "district":
-									names.push(feature.place_name);
-									break;
-								case "region":
-									names.push(feature.place_name);
-									break;
-								case "country":
-									names.push(feature.place_name);
-							}
-						});
-						locationName = names[0];
-						$("#current").text(locationName);
-					});
+					let arraysIndex = marker.getElement().getAttribute("data-index");
+					locationName = locationNames[arraysIndex];
+					currentCoordinates = [locationForecasts[arraysIndex].lon, locationForecasts[arraysIndex].lat];
+					drawForecast(locationForecasts[arraysIndex]);
+					currentLocation.text(locationName);
 				});
 			}
 
@@ -155,7 +150,18 @@
 				zoom: 10 // starting zoom
 			});
 			let userInput = $("#userInput");
-			getWeather("San Antonio, Texas, United States");
+			let currentLocation = $("#current");
+			let locationForecasts = [];
+			let locationNames = [];
+			let locationName;
+			let currentCoordinates;
+			let home = {features: [{center: [-98.4951, 29.4246], place_name: "San Antonio, Texas, United States"}]}
+			if (localStorage.getItem("home") === null) {
+				localStorage.setItem("home", JSON.stringify(home));
+			} else {
+				home = JSON.parse(localStorage.getItem("home"));
+			}
+			getWeatherFromObject(home);
 			// check the user's input if they click the search button
 			$("#searchButton").click(function () {
 				checkUserInput();
@@ -172,8 +178,7 @@
 				getWeatherFromCoord(coordinates);
 				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 				addMarkerListener(marker);
-				let locationName = "Unknown Location";
-				$("#current").text(locationName);
+				marker.getElement().setAttribute("data-index", locationForecasts.length);
 				reverseGeocode({
 					lng: coordinates[0],
 					lat: coordinates[1]
@@ -198,10 +203,19 @@
 					if (result.features.length === 0) {
 						locationName = "Unknown Location";
 					}
-					$("#current").text(locationName);
+					locationNames.push(locationName);
+					currentLocation.text(locationName);
 					let popup = new mapboxgl.Popup().setHTML(locationName);
 					marker.setPopup(popup);
 				});
+			});
+			$("#setHome").click(function () {
+				localStorage.setItem("home", JSON.stringify({
+					features: [{
+						center: currentCoordinates,
+						place_name: locationName
+					}]
+				}));
 			});
 		});
 	</script>
