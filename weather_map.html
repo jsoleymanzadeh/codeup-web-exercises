@@ -11,10 +11,18 @@
 </head>
 <body>
 	<div class="container">
-		<label for="userInput">Place <input type="text" id="userInput"></label>
-		<button class="btn btn-primary" id="searchButton">Search</button>
-		<div>Current Location: <span id="current"></span></div>
-		<button class="btn btn-primary" id="setHome">Set Home</button>
+		<div class="row">
+			<div class="col">
+				<label for="userInput">Place <input type="text" id="userInput"></label>
+				<button class="btn btn-primary" id="searchButton">Search</button>
+				<div>Current Location: <span id="current"></span></div>
+				<button class="btn btn-primary" id="setHome">Set Home</button>
+				<button class="btn btn-primary" id="addBookmark">Add Bookmark</button>
+			</div>
+			<div class="col">
+				<div id="bookmarks"></div>
+			</div>
+		</div>
 		<section id="forecast" class="row"></section>
 		<div id='map' style='width: 100%; height: 300px;'></div>
 	</div>
@@ -32,6 +40,7 @@
 				return date.toDateString();
 			}
 
+			// draw the forecast data in HTML
 			function drawForecast(data) {
 				let forecastSection = $("#forecast");
 				forecastSection.html("");
@@ -85,7 +94,7 @@
 				});
 			}
 
-			// use OpenWeatherMap API to find weather data of a location given by coordinates and insert to HTML
+			// use OpenWeatherMap to find weather data of a location given by coordinates and insert to HTML
 			function getWeatherFromCoord(place) {
 				$.get("https://api.openweathermap.org/data/2.5/onecall", {
 					appid: WEATHER_MAP_OPEN_WEATHER_APPID,
@@ -93,8 +102,7 @@
 					lat: place[1],
 					units: "imperial"
 				}).done(function (data) {
-					locationForecasts.push(data);
-					currentCoordinates = [data.lon, data.lat];
+					locationForecastsArray.push(data);
 					drawForecast(data);
 					userInput.val("");
 				});
@@ -109,58 +117,94 @@
 				}
 			}
 
+			// find weather at coordinates given in an object with OpenWeatherMap and place marker on Mapbox map
 			function getWeatherFromObject(data) {
-				let coordinates = [data.features[0].center[0], data.features[0].center[1]];
+				coordinates = [data.features[0].center[0], data.features[0].center[1]];
 				locationName = data.features[0].place_name;
-				locationNames.push(locationName);
-				currentLocation.text(locationName);
+				locationNamesArray.push(locationName);
+				currentLocationSpan.text(locationName);
 				getWeatherFromCoord(coordinates);
 				map.flyTo({center: coordinates});
 				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 				let popup = new mapboxgl.Popup().setHTML(locationName);
 				marker.setPopup(popup);
+				marker.getElement().setAttribute("data-index", locationForecastsArray.length);
 				addMarkerListener(marker);
-				marker.getElement().setAttribute("data-index", locationForecasts.length);
 			}
 
-			// translate user's input into coordinates with Mapbox API for use in OpenWeatherMap API and set a marker at that location
+			// translate user's input into coordinates with Mapbox
 			function getWeather(place) {
 				geocode(place, mapboxgl.accessToken).then(function (result) {
 					getWeatherFromObject(result);
 				});
 			}
 
-			// get weather data when a marker is clicked
+			// draw stored weather data for a location when its marker is clicked
 			function addMarkerListener(marker) {
 				marker.getElement().addEventListener("click", function () {
 					let arraysIndex = marker.getElement().getAttribute("data-index");
-					locationName = locationNames[arraysIndex];
-					currentCoordinates = [locationForecasts[arraysIndex].lon, locationForecasts[arraysIndex].lat];
-					drawForecast(locationForecasts[arraysIndex]);
-					currentLocation.text(locationName);
+					locationName = locationNamesArray[arraysIndex];
+					coordinates = [locationForecastsArray[arraysIndex].lon, locationForecastsArray[arraysIndex].lat];
+					drawForecast(locationForecastsArray[arraysIndex]);
+					currentLocationSpan.text(locationName);
 				});
 			}
 
-			// create map object for Mapbox API
-			mapboxgl.accessToken = WEATHER_MAP_MAPBOX_KEY;
-			const map = new mapboxgl.Map({
-				container: 'map', // container ID
-				style: 'mapbox://styles/mapbox/streets-v11', // style URL
-				center: [-98.4951, 29.4246], // starting position [lng, lat]
-				zoom: 10 // starting zoom
-			});
-			let userInput = $("#userInput");
-			let currentLocation = $("#current");
-			let locationForecasts = [];
-			let locationNames = [];
-			let locationName;
-			let currentCoordinates;
+			// create bookmark buttons and add listeners to get weather and add a marker for each bookmarked location
+			function drawBookmarks() {
+				bookmarksDiv.html("");
+				bookmarks.forEach(function (bookmark) {
+					let bookmarkButton = document.createElement("button");
+					bookmarkButton.setAttribute("class", "btn btn-link");
+					bookmarkButton.innerText = bookmark.features[0].place_name;
+					bookmarksDiv.append(bookmarkButton);
+					bookmarkButton.addEventListener("click", function () {
+						getWeatherFromObject(bookmark);
+					});
+				});
+				let deleteButton = document.createElement("button");
+				deleteButton.setAttribute("class", "btn btn-secondary");
+				deleteButton.innerText = "Delete Bookmarks";
+				bookmarksDiv.append(deleteButton);
+				deleteButton.addEventListener("click", function () {
+					bookmarksDiv.html("");
+					bookmarks.length = 0;
+					localStorage.removeItem("bookmarks");
+				})
+			}
+
+			// create initial home object
 			let home = {features: [{center: [-98.4951, 29.4246], place_name: "San Antonio, Texas, United States"}]}
+			// if user has a home saved in localStorage, use it instead of the initial object
 			if (localStorage.getItem("home") === null) {
 				localStorage.setItem("home", JSON.stringify(home));
 			} else {
 				home = JSON.parse(localStorage.getItem("home"));
 			}
+			// create map object for Mapbox API
+			mapboxgl.accessToken = WEATHER_MAP_MAPBOX_KEY;
+			const map = new mapboxgl.Map({
+				container: 'map', // container ID
+				style: 'mapbox://styles/mapbox/streets-v11', // style URL
+				center: home.features[0].center, // starting position [lng, lat]
+				zoom: 10 // starting zoom
+			});
+			// store jQuery objects as variables for easier access
+			let userInput = $("#userInput");
+			let currentLocationSpan = $("#current");
+			let bookmarksDiv = $("#bookmarks");
+			// declare empty arrays and undefined variables for access in larger scope
+			let locationForecastsArray = [];
+			let locationNamesArray = [];
+			let bookmarks = [];
+			let locationName;
+			let coordinates;
+			// add bookmarks from localStorage to bookmarks array and draw buttons for each bookmark
+			if (localStorage.getItem("bookmarks") !== null) {
+				bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
+				drawBookmarks();
+			}
+			// get weather for home location
 			getWeatherFromObject(home);
 			// check the user's input if they click the search button
 			$("#searchButton").click(function () {
@@ -174,11 +218,11 @@
 			});
 			// double-clicking a location on the map gets weather data and places a marker for that location
 			map.on("dblclick", function (e) {
-				let coordinates = [e.lngLat.lng, e.lngLat.lat];
+				coordinates = [e.lngLat.lng, e.lngLat.lat];
 				getWeatherFromCoord(coordinates);
 				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
 				addMarkerListener(marker);
-				marker.getElement().setAttribute("data-index", locationForecasts.length);
+				marker.getElement().setAttribute("data-index", locationForecastsArray.length);
 				reverseGeocode({
 					lng: coordinates[0],
 					lat: coordinates[1]
@@ -203,19 +247,26 @@
 					if (result.features.length === 0) {
 						locationName = "Unknown Location";
 					}
-					locationNames.push(locationName);
-					currentLocation.text(locationName);
+					locationNamesArray.push(locationName);
+					currentLocationSpan.text(locationName);
 					let popup = new mapboxgl.Popup().setHTML(locationName);
 					marker.setPopup(popup);
 				});
 			});
+			// adds listener to home button to set the current location as home in localStorage
 			$("#setHome").click(function () {
 				localStorage.setItem("home", JSON.stringify({
 					features: [{
-						center: currentCoordinates,
+						center: coordinates,
 						place_name: locationName
 					}]
 				}));
+			});
+			// adds listener to add bookmark button to store the current location into localStorage and the bookmarks array and redraw the buttons
+			$("#addBookmark").click(function () {
+				bookmarks.push({features: [{center: coordinates, place_name: locationName}]});
+				localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+				drawBookmarks();
 			});
 		});
 	</script>
