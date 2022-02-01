@@ -20,6 +20,7 @@
 				<button class="btn btn-primary" id="addBookmark">Add Bookmark</button>
 			</div>
 			<div class="col">
+				<button class="btn btn-success" id="goHome">Home</button>
 				<div id="bookmarks"></div>
 			</div>
 		</div>
@@ -132,10 +133,18 @@
 				addMarkerListener(marker);
 			}
 
-			// translate user's input into coordinates with Mapbox
+			// translate user's input into coordinates with Mapbox and get weather for location
 			function getWeather(place) {
 				geocode(place, mapboxgl.accessToken).then(function (result) {
-					getWeatherFromObject(result);
+					coordinates = [result.features[0].center[0], result.features[0].center[1]];
+					locationName = result.features[0].place_name;
+					if (locationNamesArray.includes(locationName)) {
+						drawForecast(locationForecastsArray[locationNamesArray.indexOf(locationName)]);
+						currentLocationSpan.text(locationName);
+						map.flyTo({center: coordinates});
+					} else {
+						getWeatherFromObject(result);
+					}
 				});
 			}
 
@@ -159,11 +168,20 @@
 					bookmarkButton.innerText = bookmark.features[0].place_name;
 					bookmarksDiv.append(bookmarkButton);
 					bookmarkButton.addEventListener("click", function () {
-						getWeatherFromObject(bookmark);
+						if (!bookmark.clicked) {
+							bookmark.clicked = true;
+							getWeatherFromObject(bookmark);
+						} else {
+							locationName = bookmark.features[0].place_name;
+							coordinates = bookmark.features[0].center;
+							drawForecast(locationForecastsArray[locationNamesArray.indexOf(locationName)]);
+							currentLocationSpan.text(locationName);
+							map.flyTo({center: coordinates});
+						}
 					});
 				});
 				let deleteButton = document.createElement("button");
-				deleteButton.setAttribute("class", "btn btn-secondary");
+				deleteButton.setAttribute("class", "btn btn-danger");
 				deleteButton.innerText = "Delete Bookmarks";
 				bookmarksDiv.append(deleteButton);
 				deleteButton.addEventListener("click", function () {
@@ -199,9 +217,12 @@
 			let bookmarks = [];
 			let locationName;
 			let coordinates;
-			// add bookmarks from localStorage to bookmarks array and draw buttons for each bookmark
+			// add bookmarks from localStorage to bookmarks array, reset clicked tracker, and draw buttons for each bookmark
 			if (localStorage.getItem("bookmarks") !== null) {
 				bookmarks = JSON.parse(localStorage.getItem("bookmarks"));
+				bookmarks.forEach(function (bookmark) {
+					bookmark.clicked = false;
+				});
 				drawBookmarks();
 			}
 			// get weather for home location
@@ -253,18 +274,22 @@
 					marker.setPopup(popup);
 				});
 			});
-			// adds listener to home button to set the current location as home in localStorage
+			// adds listener to set home button to set the current location as home in the variable and in localStorage
 			$("#setHome").click(function () {
-				localStorage.setItem("home", JSON.stringify({
-					features: [{
-						center: coordinates,
-						place_name: locationName
-					}]
-				}));
+				home = {features: [{center: coordinates, place_name: locationName}]}
+				localStorage.setItem("home", JSON.stringify(home));
+			});
+			// adds listener to draw weather data for home
+			$("#goHome").click(function () {
+				locationName = home.features[0].place_name;
+				coordinates = home.features[0].center;
+				drawForecast(locationForecastsArray[locationNamesArray.indexOf(locationName)]);
+				currentLocationSpan.text(locationName);
+				map.flyTo({center: coordinates});
 			});
 			// adds listener to add bookmark button to store the current location into localStorage and the bookmarks array and redraw the buttons
 			$("#addBookmark").click(function () {
-				bookmarks.push({features: [{center: coordinates, place_name: locationName}]});
+				bookmarks.push({features: [{center: coordinates, place_name: locationName}], clicked: true});
 				localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
 				drawBookmarks();
 			});
