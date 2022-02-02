@@ -12,23 +12,46 @@
 		.container {
 			background-color: rgba(0, 0, 0, 0.1);
 		}
+
+		#userInput {
+			width: 85%;
+		}
+
+		#searchButton {
+			width: 10%;
+		}
+
+		.btn {
+			margin: 0.2em;
+		}
+
+		#bookmarks > .btn {
+			margin: 0;
+		}
 	</style>
 </head>
 <body>
 	<div class="container">
-		<div class="row">
-			<div class="col">
-				<label for="userInput" class="text-white">Place <input type="text" id="userInput"></label>
-				<button class="btn btn-primary" id="searchButton">Search</button>
-				<div class="text-white">Current Location: <span id="current"></span></div>
-				<button class="btn btn-secondary" id="setHome">Set Home</button>
-				<button class="btn btn-secondary" id="addBookmark">Add Bookmark</button>
+		<label for="userInput" class="text-white w-100 text-center"><input type="text" id="userInput">
+			<button class="btn btn-primary" id="searchButton">Search</button>
+		</label>
+		<div class="row justify-content-around">
+			<div>
+				<button class="btn btn-primary" id="setHome">Set Home</button>
+				<button class="btn btn-primary" id="addBookmark">Add Bookmark</button>
 			</div>
-			<div class="col">
+			<div class="row">
 				<button class="btn btn-success" id="goHome">Home</button>
-				<div id="bookmarks"></div>
+				<div class="dropdown">
+					<button class="btn btn-light dropdown-toggle disabled" id="bookmarksDropdown" data-toggle="dropdown">
+						Bookmarks
+					</button>
+					<div class="dropdown-menu" id="bookmarks"></div>
+				</div>
+				<button class="btn btn-danger disabled" id="deleteBookmarks">Delete Bookmarks</button>
 			</div>
 		</div>
+		<div class="text-white">Current Location: <span id="current"></span></div>
 		<section id="forecast" class="row"></section>
 		<div class="mt-3" id='map' style='width: 100%; height: 300px;'></div>
 	</div>
@@ -168,9 +191,13 @@
 			// create bookmark buttons and add listeners to get weather and add a marker for each bookmarked location
 			function drawBookmarks() {
 				bookmarksDiv.html("");
+				if (bookmarks.length !== 0) {
+					$("#bookmarksDropdown").removeClass("disabled");
+					deleteButton.removeClass("disabled");
+				}
 				bookmarks.forEach(function (bookmark) {
 					let bookmarkButton = document.createElement("button");
-					bookmarkButton.setAttribute("class", "btn btn-info m-1");
+					bookmarkButton.setAttribute("class", "btn btn-link dropdown-item");
 					bookmarkButton.innerText = bookmark.features[0].place_name;
 					bookmarksDiv.append(bookmarkButton);
 					bookmarkButton.addEventListener("click", function () {
@@ -185,15 +212,6 @@
 							map.flyTo({center: coordinates});
 						}
 					});
-				});
-				let deleteButton = document.createElement("button");
-				deleteButton.setAttribute("class", "btn btn-danger");
-				deleteButton.innerText = "Delete Bookmarks";
-				bookmarksDiv.append(deleteButton);
-				deleteButton.addEventListener("click", function () {
-					bookmarksDiv.html("");
-					bookmarks.length = 0;
-					localStorage.removeItem("bookmarks");
 				});
 			}
 
@@ -217,6 +235,7 @@
 			let userInput = $("#userInput");
 			let currentLocationSpan = $("#current");
 			let bookmarksDiv = $("#bookmarks");
+			let deleteButton = $("#deleteBookmarks");
 			// declare empty arrays and undefined variables for access in larger scope
 			let locationForecastsArray = [];
 			let locationNamesArray = [];
@@ -293,11 +312,28 @@
 				currentLocationSpan.text(locationName);
 				map.flyTo({center: coordinates});
 			});
-			// adds listener to add bookmark button to store the current location into localStorage and the bookmarks array and redraw the buttons
+			// adds listener to add bookmark button to store the current location into localStorage and the bookmarks array
 			$("#addBookmark").click(function () {
-				bookmarks.push({features: [{center: coordinates, place_name: locationName}], clicked: true});
-				localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
-				drawBookmarks();
+				let bookmarked = false;
+				bookmarks.forEach(function (bookmark) {
+					if (bookmark.features[0].center === coordinates) {
+						bookmarked = true;
+					}
+				})
+				if (!bookmarked) {
+					$("#bookmarksDropdown").removeClass("disabled");
+					bookmarks.push({features: [{center: coordinates, place_name: locationName}], clicked: true});
+					localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+					drawBookmarks();
+				}
+			});
+			// adds listener to delete bookmarks button to delete all bookmarks from localStorage and the bookmarks array
+			deleteButton.on("click", function () {
+				bookmarksDiv.html("");
+				$("#bookmarksDropdown").addClass("disabled");
+				$(this).addClass("disabled");
+				bookmarks.length = 0;
+				localStorage.removeItem("bookmarks");
 			});
 		});
 	</script>
