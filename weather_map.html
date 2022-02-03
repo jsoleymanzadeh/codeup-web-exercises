@@ -13,44 +13,50 @@
 			background-color: rgba(0, 0, 0, 0.3);
 		}
 
-		#searchButton {
-			width: 10%;
+		.btn {
+			/*margin: 0.2em;*/
 		}
 
-		.btn {
-			margin: 0.2em;
+		#userInput {
+			width: 85%;
+		}
+
+		#historyDropdown, #searchButton {
+			/*margin: 0;*/
 		}
 
 		#bookmarks > .btn, #history > .btn {
-			margin: 0;
+			/*margin: 0;*/
 		}
 	</style>
 </head>
 <body>
 	<div class="container">
-		<div class="row align-items-center">
-			<label for="userInput" class="text-white w-75"><input class="w-100" type="text" id="userInput"></label>
-			<button class="btn btn-primary" id="searchButton">Search</button>
-			<div class="dropdown">
-				<button class="btn btn-light dropdown-toggle" id="historyDropdown" data-toggle="dropdown">
-					History
-				</button>
-				<div class="dropdown-menu dropdown-menu-right" id="history"></div>
+		<div class="row mb-1">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<button class="btn btn-primary dropdown-toggle" id="historyDropdown" data-toggle="dropdown">
+						History
+					</button>
+					<div class="dropdown-menu" id="history"></div>
+				</div>
+				<input class="" type="text" id="userInput" placeholder="City/Region">
+				<div class="input-group-append">
+					<button class="btn btn-primary" id="searchButton">Search</button>
+				</div>
 			</div>
 		</div>
-		<div class="row justify-content-around">
-			<div>
-				<button class="btn btn-primary" id="setHome">Set Home</button>
-				<button class="btn btn-primary" id="addBookmark">Add Bookmark</button>
+		<div class="row">
+			<div class="col text-left">
+				<button class="btn btn-light" id="setHome">Set Home</button>
+				<button class="btn btn-light" id="addBookmark">Add Bookmark</button>
 			</div>
-			<div class="row">
+			<div class="col text-right">
 				<button class="btn btn-success" id="goHome">Home</button>
-				<div class="dropdown">
-					<button class="btn btn-light dropdown-toggle disabled" id="bookmarksDropdown" data-toggle="dropdown">
-						Bookmarks
-					</button>
-					<div class="dropdown-menu" id="bookmarks"></div>
-				</div>
+				<button class="btn btn-light dropdown-toggle disabled" id="bookmarksDropdown" data-toggle="dropdown">
+					Bookmarks
+				</button>
+				<div class="dropdown-menu" id="bookmarks"></div>
 				<button class="btn btn-danger disabled" id="deleteBookmarks">Delete Bookmarks</button>
 			</div>
 		</div>
@@ -163,7 +169,7 @@
 				getWeatherFromCoord(coordinates);
 				map.flyTo({center: coordinates});
 				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
-				let popup = new mapboxgl.Popup().setHTML(locationName);
+				let popup = new mapboxgl.Popup().setHTML("<dt>" + locationName + "</dt><dd>Lat: " + coordinates[1].toFixed(3) + "<br>Long: " + coordinates[0].toFixed(3) + "</dd>");
 				marker.setPopup(popup);
 				marker.getElement().setAttribute("data-index", locationForecastsArray.length);
 				addMarkerListener(marker);
@@ -322,7 +328,7 @@
 					}
 					locationNamesArray.push(locationName);
 					currentLocationSpan.text(locationName);
-					let popup = new mapboxgl.Popup().setHTML(locationName);
+					let popup = new mapboxgl.Popup().setHTML("<dt>" + locationName + "</dt><dd>Lat: " + coordinates[1].toFixed(3) + "<br>Long: " + coordinates[0].toFixed(3) + "</dd>");
 					marker.setPopup(popup);
 					getWeatherFromCoord(coordinates);
 				});
