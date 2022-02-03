@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -10,11 +10,7 @@
 	<link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet'/>
 	<style>
 		.container {
-			background-color: rgba(0, 0, 0, 0.1);
-		}
-
-		#userInput {
-			width: 85%;
+			background-color: rgba(0, 0, 0, 0.3);
 		}
 
 		#searchButton {
@@ -25,16 +21,23 @@
 			margin: 0.2em;
 		}
 
-		#bookmarks > .btn {
+		#bookmarks > .btn, #history > .btn {
 			margin: 0;
 		}
 	</style>
 </head>
 <body>
 	<div class="container">
-		<label for="userInput" class="text-white w-100 text-center"><input type="text" id="userInput">
+		<div class="row align-items-center">
+			<label for="userInput" class="text-white w-75"><input class="w-100" type="text" id="userInput"></label>
 			<button class="btn btn-primary" id="searchButton">Search</button>
-		</label>
+			<div class="dropdown">
+				<button class="btn btn-light dropdown-toggle" id="historyDropdown" data-toggle="dropdown">
+					History
+				</button>
+				<div class="dropdown-menu dropdown-menu-right" id="history"></div>
+			</div>
+		</div>
 		<div class="row justify-content-around">
 			<div>
 				<button class="btn btn-primary" id="setHome">Set Home</button>
@@ -51,7 +54,10 @@
 				<button class="btn btn-danger disabled" id="deleteBookmarks">Delete Bookmarks</button>
 			</div>
 		</div>
-		<div class="text-white">Current Location: <span id="current"></span></div>
+		<div class="row">
+			<div class="text-white col text-left">Current Location: <span id="current"></span></div>
+			<div class="text-white col text-right">Home Location: <span id="home"></span></div>
+		</div>
 		<section id="forecast" class="row"></section>
 		<div class="mt-3" id='map' style='width: 100%; height: 300px;'></div>
 	</div>
@@ -124,7 +130,7 @@
 				});
 			}
 
-			// use OpenWeatherMap to find weather data of a location given by coordinates and insert to HTML
+			// use OpenWeatherMap to find weather data of a location given by coordinates and insert to HTML, then draw the history HTML
 			function getWeatherFromCoord(place) {
 				$.get("https://api.openweathermap.org/data/2.5/onecall", {
 					appid: WEATHER_MAP_OPEN_WEATHER_APPID,
@@ -133,6 +139,7 @@
 					units: "imperial"
 				}).done(function (data) {
 					locationForecastsArray.push(data);
+					drawHistory();
 					drawForecast(data);
 					userInput.val("");
 				});
@@ -188,6 +195,25 @@
 				});
 			}
 
+			// draw history HTML for locations already searched by the user
+			function drawHistory() {
+				historyDiv.html("");
+				for (let i = locationNamesArray.length - 1; i > -1; i--) {
+					let record = document.createElement("button");
+					record.setAttribute("data-arrayIndex", i.toString());
+					record.setAttribute("class", "btn btn-link dropdown-item");
+					record.innerText = locationNamesArray[i];
+					historyDiv.append(record);
+					record.addEventListener("click", function () {
+						locationName = locationNamesArray[i];
+						coordinates = [locationForecastsArray[i].lon, locationForecastsArray[i].lat];
+						map.flyTo({center: coordinates});
+						drawForecast(locationForecastsArray[i]);
+						currentLocationSpan.text(locationName);
+					});
+				}
+			}
+
 			// create bookmark buttons and add listeners to get weather and add a marker for each bookmarked location
 			function drawBookmarks() {
 				bookmarksDiv.html("");
@@ -223,6 +249,7 @@
 			} else {
 				home = JSON.parse(localStorage.getItem("home"));
 			}
+			$("#home").text(home.features[0].place_name);
 			// create map object for Mapbox API
 			mapboxgl.accessToken = WEATHER_MAP_MAPBOX_KEY;
 			const map = new mapboxgl.Map({
@@ -234,6 +261,7 @@
 			// store jQuery objects as variables for easier access
 			let userInput = $("#userInput");
 			let currentLocationSpan = $("#current");
+			let historyDiv = $("#history");
 			let bookmarksDiv = $("#bookmarks");
 			let deleteButton = $("#deleteBookmarks");
 			// declare empty arrays and undefined variables for access in larger scope
@@ -265,10 +293,9 @@
 			// double-clicking a location on the map gets weather data and places a marker for that location
 			map.on("dblclick", function (e) {
 				coordinates = [e.lngLat.lng, e.lngLat.lat];
-				getWeatherFromCoord(coordinates);
 				let marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
-				addMarkerListener(marker);
 				marker.getElement().setAttribute("data-index", locationForecastsArray.length);
+				addMarkerListener(marker);
 				reverseGeocode({
 					lng: coordinates[0],
 					lat: coordinates[1]
@@ -297,11 +324,13 @@
 					currentLocationSpan.text(locationName);
 					let popup = new mapboxgl.Popup().setHTML(locationName);
 					marker.setPopup(popup);
+					getWeatherFromCoord(coordinates);
 				});
 			});
 			// adds listener to set home button to set the current location as home in the variable and in localStorage
 			$("#setHome").click(function () {
 				home = {features: [{center: coordinates, place_name: locationName}]}
+				$("#home").text(home.features[0].place_name);
 				localStorage.setItem("home", JSON.stringify(home));
 			});
 			// adds listener to draw weather data for home
