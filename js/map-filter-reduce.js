@@ -1,3 +1,4 @@
+"use strict";
 const users = [{
 	id: 1,
 	name: 'ryan',
@@ -31,9 +32,7 @@ const users = [{
 }];
 let threeLanguages = users.filter(({languages}) => languages.length >= 3);
 let emails = users.map(({email}) => email);
-let years = users.reduce((total, {yearsOfExperience}) => {
-	return total += yearsOfExperience
-}, 0);
+let years = users.reduce((total, {yearsOfExperience}) => total += yearsOfExperience, 0);
 let averageYears = years / users.length;
 let longestEmail = users.reduce((longest, {email}) => {
 	if (email.length > longest.length) {
@@ -46,7 +45,7 @@ let allUsers = users.reduce((outputString, {name}) => {
 	if (name === users[users.length - 1].name) {
 		return `${outputString} and ${name}.`;
 	} else {
-		return `${outputString} ${name},`
+		return `${outputString} ${name},`;
 	}
 }, "Your instructors are:");
 let languageList = users.reduce((uniqueLanguages, {languages}) => {
