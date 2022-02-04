@@ -1,5 +1,5 @@
 "use strict";
-let lastCommit = () => fetch("https://api.github.com/repos/jsoleymanzadeh/codeup-web-exercises/commits", {headers: {'Authorization': 'token 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'}})
+let lastCommit = () => fetch("https://api.github.com/repos/jsoleymanzadeh/codeup-web-exercises/commits", {headers: {'Authorization': `token ${GITHUB_PERSONAL_ACCESS_TOKEN}`}})
 	.then(response => response.json());
 
 lastCommit()
