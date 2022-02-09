@@ -223,28 +223,15 @@ function addProperty(input) {
 // Assume for the next questions, this can be used as the array of user objects:
 
 
-let users = [
-	{
-		name: 'Justin',
-		occupation: 'Web Developer',
-		averageAnnualPizzasOrdered: 22
-	},
-	{
-		name: 'Cathy',
-		occupation: 'Web Developer',
-		averageAnnualPizzasOrdered: 15
-	},
-	{
-		name: 'Fred',
-		occupation: 'Data Engineer',
-		averageAnnualPizzasOrdered: 35
-	},
-	{
-		name: 'Mary',
-		occupation: 'DBA',
-		averageAnnualPizzasOrdered: 10
-	}
-];
+let users = [{
+	name: 'Justin', occupation: 'Web Developer', averageAnnualPizzasOrdered: 22
+}, {
+	name: 'Cathy', occupation: 'Web Developer', averageAnnualPizzasOrdered: 15
+}, {
+	name: 'Fred', occupation: 'Data Engineer', averageAnnualPizzasOrdered: 35
+}, {
+	name: 'Mary', occupation: 'DBA', averageAnnualPizzasOrdered: 10
+}];
 
 // Write a function that takes in an array of user objects and returns the user object of the user with the longest name
 function longestName(input) {
@@ -283,4 +270,20 @@ function averagePizzas(input) {
 		totalPizzas += user.averageAnnualPizzasOrdered + 5;
 	});
 	return totalPizzas / input.length;
+}
+
+let removeDuplicates = list => list.reduce((newList, number) => {
+	if (!newList.includes(number)) {
+		newList.push(number);
+	}
+	return newList.sort((a, b) => a - b);
+}, []);
+let findVowelCount = word => {
+	let wordArray = word.split("");
+	return wordArray.reduce((counter, letter) => {
+		if (letter === "a" || letter === "A" || letter === "e" || letter === "E" || letter === "i" || letter === "I" || letter === "o" || letter === "O" || letter === "u" || letter === "U") {
+			counter++;
+		}
+		return counter;
+	}, 0);
 }
