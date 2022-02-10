@@ -287,3 +287,12 @@ let findVowelCount = word => {
 		return counter;
 	}, 0);
 }
+let countDuplicateLetters = word => {
+	let wordArray = word.split("");
+	let counter = {};
+	wordArray.forEach(letter => counter[letter] === undefined ? counter[letter] = 1 : counter[letter]++);
+	wordArray.forEach(letter => {
+		if (counter[letter] === 1) delete counter[letter];
+	});
+	return counter;
+}
