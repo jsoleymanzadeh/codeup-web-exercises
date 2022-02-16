@@ -296,3 +296,6 @@ let countDuplicateLetters = word => {
 	});
 	return counter;
 }
+let moveNegatives = list => {
+	return list.sort((a, b) => a < 0 ? 1 : -1);
+}
